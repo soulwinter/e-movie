@@ -2,7 +2,7 @@
 e-movie is a web application that allows users to search for and browse movies. It is built using Spring Boot and Vue.js.
 
 ## Dataset
-the movie dataset is from https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?resource=download
+The movie dataset is from https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?resource=download
 
 ## Features
 
@@ -14,9 +14,10 @@ the movie dataset is from https://www.kaggle.com/datasets/rounakbanik/the-movies
 * Share movie links with friends via social media or email.
 
 
-## Usage 
+## Database Design
 
-1. Navigate to http://localhost:8080 in your browser  
-2. Search for a movie or browse by genre or actor/actress  
+- [Database Description Document 数据库描述文档](https://github.com/soulwinter/e-movie/blob/master/database_design.md)
+- [SQL File](https://github.com/soulwinter/e-movie/blob/master/creOSMovie.sql)
+- [Database ER Diagram 数据库 ER 关系图](https://github.com/soulwinter/e-movie/blob/master/ER_of_database.pdf)
 
 
