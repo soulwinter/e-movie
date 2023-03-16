@@ -1,0 +1,13 @@
+package com.emovie;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class EmovieServerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(EmovieServerApplication.class, args);
+    }
+
+}

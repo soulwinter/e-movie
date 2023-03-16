@@ -1,0 +1,18 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: emovie
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#写自己的数据库---------------------------------------------------------------
+    url: jdbc:mysql://localhost:3306/emovie?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+
+logging:
+  level:
+    com.emovie: debug
+
+#mybatis-plus:
+#  type-aliases-package: com.emovie.entity # 别名扫描包
