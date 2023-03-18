@@ -1,211 +1,190 @@
 /*==============================================================*/
-/* DBMS name:      ORACLE Version 12c                           */
-/* Created on:     2023/3/12 20:43:18                           */
+/* DBMS name:      MySQL 5.0                                    */
+/* Created on:     2023/3/17 22:53:36                           */
 /*==============================================================*/
 
 
-alter table "Movie_Company"
-   drop constraint FK_MOVIE_CO_MOVIE_COM_MOVIE;
+drop table if exists Company;
 
-alter table "Movie_Company"
-   drop constraint FK_MOVIE_CO_MOVIE_COM_COMPANY;
+drop table if exists Country;
 
-alter table "Movie_Country"
-   drop constraint FK_MOVIE_CO_MOVIE_COU_MOVIE;
+drop table if exists Genre;
 
-alter table "Movie_Country"
-   drop constraint FK_MOVIE_CO_MOVIE_COU_COUNTRY;
+drop table if exists Keyword;
 
-alter table "Movie_Genre"
-   drop constraint FK_MOVIE_GE_MOVIE_GEN_MOVIE;
+drop table if exists Movie;
 
-alter table "Movie_Genre"
-   drop constraint FK_MOVIE_GE_REFERENCE_GENRE;
+drop table if exists Movie_Company;
 
-alter table "Movie_Keyword"
-   drop constraint FK_MOVIE_KE_MOVIE_KEY_MOVIE;
+drop table if exists Movie_Country;
 
-alter table "Movie_Keyword"
-   drop constraint FK_MOVIE_KE_MOVIE_KEY_KEYWORD;
+drop table if exists Movie_Genre;
 
-drop table "Company" cascade constraints;
+drop table if exists Movie_Keyword;
 
-drop table "Country" cascade constraints;
+drop table if exists User;
 
-drop table "Genre" cascade constraints;
-
-drop table "Keyword" cascade constraints;
-
-drop table "Movie" cascade constraints;
-
-drop table "Movie_Company" cascade constraints;
-
-drop table "Movie_Country" cascade constraints;
-
-drop table "Movie_Genre" cascade constraints;
-
-drop table "Movie_Keyword" cascade constraints;
-
-drop table "User" cascade constraints;
-
-drop table "Vote" cascade constraints;
+drop table if exists Vote;
 
 /*==============================================================*/
-/* Table: "Company"                                             */
+/* Table: Company                                               */
 /*==============================================================*/
-create table "Company" (
-   "id"                 NUMBER                not null,
-   "name"               VARCHAR2(200),
-   "deleted"            NUMBER,
-   constraint PK_COMPANY primary key ("id")
+create table Company
+(
+   id                   numeric(8,0) not null,
+   name                 varchar(200),
+   deleted              numeric(8,0),
+   primary key (id)
 );
 
 /*==============================================================*/
-/* Table: "Country"                                             */
+/* Table: Country                                               */
 /*==============================================================*/
-create table "Country" (
-   "id"                 NUMBER                not null,
-   "name"               VARCHAR2(200),
-   "deleted"            NUMBER,
-   constraint PK_COUNTRY primary key ("id")
+create table Country
+(
+   id                   numeric(8,0) not null,
+   name                 varchar(200),
+   deleted              numeric(8,0),
+   primary key (id)
 );
 
 /*==============================================================*/
-/* Table: "Genre"                                               */
+/* Table: Genre                                                 */
 /*==============================================================*/
-create table "Genre" (
-   "id"                 NUMBER                not null,
-   "name"               VARCHAR2(200)         not null,
-   "deleted"            NUMBER,
-   constraint PK_GENRE primary key ("id")
+create table Genre
+(
+   id                   numeric(8,0) not null,
+   name                 varchar(200) not null,
+   deleted              numeric(8,0),
+   primary key (id)
 );
 
 /*==============================================================*/
-/* Table: "Keyword"                                             */
+/* Table: Keyword                                               */
 /*==============================================================*/
-create table "Keyword" (
-   "id"                 NUMBER                not null,
-   "name"               VARCHAR2(0),
-   "deleted"            NUMBER,
-   constraint PK_KEYWORD primary key ("id")
+create table Keyword
+(
+   id                   numeric(8,0) not null,
+   name                 varchar(0),
+   deleted              numeric(8,0),
+   primary key (id)
 );
 
 /*==============================================================*/
-/* Table: "Movie"                                               */
+/* Table: Movie                                                 */
 /*==============================================================*/
-create table "Movie" (
-   "id"                 NUMBER                not null,
-   "adult"              NUMBER,
-   "budget"             NUMBER,
-   "homepage"           VARCHAR2(200),
-   "imgb_id"            NUMBER,
-   "original_language"  VARCHAR2(500),
-   "original_title"     VARCHAR2(500),
-   "overview"           VARCHAR2(500),
-   "popularity"         NUMBER,
-   "poster_path"        VARCHAR2(500),
-   "release_date"       VARCHAR2(500),
-   "revenue"            NUMBER,
-   "runtime"            NUMBER,
-   "status"             NUMBER,
-   "tagline"            VARCHAR2(500),
-   "title"              VARCHAR2(500),
-   "vote_average"       NUMBER,
-   "vote_count"         NUMBER,
-   "allCrew"            VARCHAR2(500),
-   "deleted"            NUMBER,
-   constraint PK_MOVIE primary key ("id")
+create table Movie
+(
+   id                   numeric(8,0) not null,
+   adult                numeric(8,0),
+   budget               numeric(8,0),
+   homepage             varchar(200),
+   imgb_id              numeric(8,0),
+   original_language    varchar(500),
+   original_title       varchar(500),
+   overview             varchar(500),
+   popularity           numeric(8,0),
+   poster_path          varchar(500),
+   release_date         varchar(500),
+   revenue              numeric(8,0),
+   runtime              numeric(8,0),
+   status               numeric(8,0),
+   tagline              varchar(500),
+   title                varchar(500),
+   vote_average         numeric(8,0),
+   vote_count           numeric(8,0),
+   allCrew              varchar(500),
+   deleted              numeric(8,0),
+   primary key (id)
 );
 
 /*==============================================================*/
-/* Table: "Movie_Company"                                       */
+/* Table: Movie_Company                                         */
 /*==============================================================*/
-create table "Movie_Company" (
-   "id"                 NUMBER,
-   "Com_id"             NUMBER,
-   "deleted"            NUMBER
+create table Movie_Company
+(
+   id                   numeric(8,0),
+   Com_id               numeric(8,0),
+   deleted              numeric(8,0)
 );
 
 /*==============================================================*/
-/* Table: "Movie_Country"                                       */
+/* Table: Movie_Country                                         */
 /*==============================================================*/
-create table "Movie_Country" (
-   "id"                 NUMBER,
-   "Cou_id"             NUMBER,
-   "deleted"            NUMBER
+create table Movie_Country
+(
+   id                   numeric(8,0),
+   Cou_id               numeric(8,0),
+   deleted              numeric(8,0)
 );
 
 /*==============================================================*/
-/* Table: "Movie_Genre"                                         */
+/* Table: Movie_Genre                                           */
 /*==============================================================*/
-create table "Movie_Genre" (
-   "id"                 NUMBER,
-   "Gen_id"             NUMBER,
-   "deleted"            NUMBER
+create table Movie_Genre
+(
+   id                   numeric(8,0),
+   Gen_id               numeric(8,0),
+   deleted              numeric(8,0)
 );
 
 /*==============================================================*/
-/* Table: "Movie_Keyword"                                       */
+/* Table: Movie_Keyword                                         */
 /*==============================================================*/
-create table "Movie_Keyword" (
-   "id"                 NUMBER,
-   "Key_id"             NUMBER,
-   "deleted"            NUMBER
+create table Movie_Keyword
+(
+   id                   numeric(8,0),
+   Key_id               numeric(8,0),
+   deleted              numeric(8,0)
 );
 
 /*==============================================================*/
-/* Table: "User"                                                */
+/* Table: User                                                  */
 /*==============================================================*/
-create table "User" (
-   "id"                 INT                   not null,
-   "username"           VARCHAR2(200 CHAR),
-   "email"              VARCHAR2(200),
-   "gender"             NUMBER,
-   "deleted"            NUMBER,
-   constraint PK_USER primary key ("id")
+create table User
+(
+   id                   int not null auto_increment,
+   username             varchar(20),
+   telephone                varchar(20),
+   password               varchar(35),
+   deleted              numeric(8,0),
+   primary key (id)
 );
 
 /*==============================================================*/
-/* Table: "Vote"                                                */
+/* Table: Vote                                                  */
 /*==============================================================*/
-create table "Vote" (
-   "user_id"            NUMBER                not null,
-   "movie_id"           NUMBER,
-   "rating"             NUMBER,
-   "timestamp"          NUMBER,
-   "deleted"            NUMBER,
-   constraint PK_VOTE primary key ("user_id")
+create table Vote
+(
+   user_id              numeric(8,0) not null,
+   movie_id             numeric(8,0) not null,
+   rating               numeric(8,0),
+   timestamp            numeric(8,0),
+   deleted              numeric(8,0),
+   primary key (user_id, movie_id)
 );
 
-alter table "Movie_Company"
-   add constraint FK_MOVIE_CO_MOVIE_COM_MOVIE foreign key ("id")
-      references "Movie" ("id");
+alter table Movie_Company add constraint FK_Movie_Company1 foreign key (id)
+      references Movie (id) on delete restrict on update restrict;
 
-alter table "Movie_Company"
-   add constraint FK_MOVIE_CO_MOVIE_COM_COMPANY foreign key ("Com_id")
-      references "Company" ("id");
+alter table Movie_Company add constraint FK_Movie_Company2 foreign key (Com_id)
+      references Company (id) on delete restrict on update restrict;
 
-alter table "Movie_Country"
-   add constraint FK_MOVIE_CO_MOVIE_COU_MOVIE foreign key ("id")
-      references "Movie" ("id");
+alter table Movie_Country add constraint FK_Movie_Country1 foreign key (id)
+      references Movie (id) on delete restrict on update restrict;
 
-alter table "Movie_Country"
-   add constraint FK_MOVIE_CO_MOVIE_COU_COUNTRY foreign key ("Cou_id")
-      references "Country" ("id");
+alter table Movie_Country add constraint FK_Movie_Country2 foreign key (Cou_id)
+      references Country (id) on delete restrict on update restrict;
 
-alter table "Movie_Genre"
-   add constraint FK_MOVIE_GE_MOVIE_GEN_MOVIE foreign key ("id")
-      references "Movie" ("id");
+alter table Movie_Genre add constraint FK_Movie_Genre1 foreign key (id)
+      references Movie (id) on delete restrict on update restrict;
 
-alter table "Movie_Genre"
-   add constraint FK_MOVIE_GE_REFERENCE_GENRE foreign key ("Gen_id")
-      references "Genre" ("id");
+alter table Movie_Genre add constraint FK_Reference_4 foreign key (Gen_id)
+      references Genre (id) on delete restrict on update restrict;
 
-alter table "Movie_Keyword"
-   add constraint FK_MOVIE_KE_MOVIE_KEY_MOVIE foreign key ("id")
-      references "Movie" ("id");
+alter table Movie_Keyword add constraint FK_Movie_Keyword1 foreign key (id)
+      references Movie (id) on delete restrict on update restrict;
 
-alter table "Movie_Keyword"
-   add constraint FK_MOVIE_KE_MOVIE_KEY_KEYWORD foreign key ("Key_id")
-      references "Keyword" ("id");
+alter table Movie_Keyword add constraint FK_Movie_Keyword2 foreign key (Key_id)
+      references Keyword (id) on delete restrict on update restrict;
 
