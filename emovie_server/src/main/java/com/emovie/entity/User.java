@@ -4,15 +4,15 @@ import lombok.Data;
 
 @Data
 public class User {
-    Long id;
+    private Long id;
 
-    String username;
+    private String username;
 
-    String password;
+    private String password;
 
-    String telephone;
+    private String telephone;
 
-    String deleted;
+    private String deleted;
 
-    String token;
+    private String token;
 }
