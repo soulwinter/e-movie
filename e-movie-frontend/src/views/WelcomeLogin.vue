@@ -4,36 +4,61 @@
       <h1>欢迎来到电影世界</h1>
       <!-- 切换登录和注册表单 -->
       <div class="toggle">
-        <button @click="showLogin = true" :class="{ active: showLogin }">登录</button>
-        <button @click="showLogin = false" :class="{ active: !showLogin }">注册</button>
+        <button @click="showLogin = 1" :class="{ active: showLogin === 1 }">密码登录</button>
+        <button @click="showLogin = 2" :class="{ active: showLogin === 2 }">验证码登录</button>
+        <button @click="showLogin = 3" :class="{ active: showLogin === 3 }">注册</button>
       </div>
       
-      <!-- 登录表单 -->
-      <form v-if="showLogin" @submit.prevent="login" class="form">
+      <!-- 密码登录表单 -->
+      <form v-if="showLogin === 1" @submit.prevent="login" class="form">
         <div class="input-group">
-          <label for="login-telephone">手机号码</label>
-          <input type="tel" id="login-telephone" v-model="loginData.telephone" required />
+          <label style="text-align: left;" for="login-telephone">手机号码</label>
+          <input type="tel" id="login-telephone" v-model="loginData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  required />
         </div>
         <div class="input-group">
-          <label for="login-password">密码</label>
-          <input type="password" id="login-password" v-model="loginData.password" pattern="^1[3-9]\d{9}$" required />
+          <label style="text-align: left;" for="login-password">密码</label>
+          <input type="password" id="login-password" v-model="loginData.password" required />
         </div>
         <button type="submit" class="btn btn-primary">登录</button>
       </form>
+
+      <!-- 验证码登录表单 -->
+      <form v-if="showLogin === 2" @submit.prevent="loginWithCode" class="form">
+        <div class="input-group">
+          <label style="text-align: left;" for="loginWithCode-telephone">手机号码</label>
+          <div style="display: flex; justify-content: space-between;">
+            <input type="tel" id="loginWithCode-telephone" v-model="loginWithCodeData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  style="width: 80%; margin-right: 5px;" required />
+            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('login_mode')">获取验证码</button>
+          </div>
+        </div>
+        <div class="input-group">
+          <label style="text-align: left;" for="loginWithCode-code">验证码</label>
+          <input type="code" id="loginWithCode-code" v-model="loginWithCodeData.code" required />
+        </div>
+        <button type="submit" class="btn btn-primary">登录</button>
+      </form>
+
       
       <!-- 注册表单 -->
-      <form v-else @submit.prevent="register" class="form">
+      <form  v-if="showLogin === 3" @submit.prevent="register" class="form">
         <div class="input-group">
-          <label for="register-username">用户名</label>
+          <label style="text-align: left;" for="register-username">用户名</label>
           <input type="text" id="register-username" v-model="registerData.username" required />
         </div>
         <div class="input-group">
-          <label for="register-password">密码</label>
+          <label style="text-align: left;" for="register-password">密码</label>
           <input type="password" id="register-password" v-model="registerData.password" required />
         </div>
-        <div class="input-group"><label for="register-telephone">手机号码</label>
-									<input type="tel" id="register-telephone" v-model="registerData.telephone" pattern="^1[3-9]\d{9}$" required />
-
+        <div class="input-group">
+          <label style="text-align: left;" for="register-telephone">手机号码</label>
+          <div style="display: flex; justify-content: space-between;">
+            <input type="tel" id="register-telephone" v-model="registerData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  style="width: 80%; margin-right: 5px;" required />
+            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('register_mode')">获取验证码</button>
+          </div>
+        </div>
+        <div class="input-group">
+          <label style="text-align: left;" for="register-password">验证码</label>
+          <input type="code" id="register-code" v-model="registerData.code" required />
         </div>
         <button type="submit" class="btn btn-primary">注册</button>
       </form>
@@ -48,7 +73,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      showLogin: true,
+      showLogin: 1,
       loginData: {
         telephone: '',
         password: '',
@@ -57,23 +82,49 @@ export default {
         username: '',
         password: '',
         telephone: '',
+        code: '',
+      },
+      loginWithCodeData: {
+        telephone: '',
+        code: '',
       },
     };
   },
   methods: {
-    // 登录函数
+    // 密码登录函数
     async login() {
       try {
-        const response = await axios.post('http://localhost:8081/user/login', this.loginData);
+        const response = await axios.post('http://localhost:8081/user/loginWithPassword', this.loginData);
         if (response.data.success) {
           // 登录成功，在此处处理数据
-          console.log('登录成功');
+          alert('登录成功');
+          // 保存 token
+          this.$store.dispatch('saveToken', response.data.data.token);    
+          this.$router.push('/home');
         } else {
           // 处理登录失败
-          console.error(response.data.errorMsg);
+          alert(response.data.errorMsg);
         }
       } catch (error) {
-        console.error('错误：', error);
+        alert('错误：', error);
+      }
+    },
+     // 验证码登录函数
+    async loginWithCode() {
+      try {
+        const response = await axios.post('http://localhost:8081/user/loginWithCode', this.loginWithCodeData);
+        if (response.data.success) {
+          // 登录成功，在此处处理数据
+          alert('登录成功');
+          // 保存 token
+          this.$store.dispatch('saveToken', response.data.data.token);   
+          this.$router.push('/home');
+        } else {
+          // 处理登录失败
+          alert(response.data.errorMsg);
+        }
+      } catch (error) {
+        alert('错误：', error);
       }
     },
     // 注册函数
@@ -82,13 +133,28 @@ export default {
         const response = await axios.post('http://localhost:8081/user/register', this.registerData);
         if (response.data.success) {
           // 注册成功，在此处处理数据
-          console.log('注册成功');
+          alert('注册成功');
         } else {
           // 处理注册失败
-          console.error(response.data.errorMsg);
+          alert(response.data.errorMsg);
         }
       } catch (error) {
-        console.error('错误：', error);
+        alert('错误：', error);
+      }
+    },
+    // 获取验证码函数
+    async getCode(mode) {
+      try {
+        const response = await axios.post('http://localhost:8081/user/code', { telephone: this.registerData.telephone, mode: mode });
+        if (response.data.success) {
+          // 获取验证码成功，在此处处理数据
+          alert('获取验证码成功');
+        } else {
+          // 处理获取验证码失败
+          alert(response.data.errorMsg);
+        }
+      } catch (error) {
+        alert('错误：', error);
       }
     },
   },
