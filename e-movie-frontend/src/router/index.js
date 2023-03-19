@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from "@/views/Login"
+import WelcomeLogin from "@/views/WelcomeLogin"
 
 const routes = [
   // Add your routes here
     {
     path: '/',
     name: 'Login',
-    component: Login
+    component: WelcomeLogin
   },
 ];
 

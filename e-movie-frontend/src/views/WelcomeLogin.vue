@@ -1,5 +1,5 @@
 <template>
-	<div class="Login">
+	<div class="WelcomeLogin">
 		<div class="contain">
 
 <!--      主栏-->
@@ -48,6 +48,102 @@
 		</div>
 	</div>
 </template>
+
+<script>
+	import axios from "axios";
+
+  export default{
+		name:'login-register',
+		data(){
+			return {
+				isLogin:false,
+				emailError: false,
+				passwordError: false,
+				existed: false,
+				form:{
+					username:'',
+					useremail:'',
+					userpwd:''
+				}
+			}
+		},
+		methods:{
+			changeType() {
+				this.isLogin = !this.isLogin
+				this.form.username = ''
+				this.form.useremail = ''
+				this.form.userpwd = ''
+			},
+			login() {
+				const self = this;
+				if (self.form.useremail != "" && self.form.userpwd != "") {
+          // console.log(self.form.useremail)
+
+					axios({
+						method:'get',
+						url: 'http://localhost:9090/email/login',
+            params: {email:self.form.useremail,password:self.form.userpwd },
+
+						// data: {
+						// 	email: self.form.useremail,
+						// 	password: self.form.userpwd
+						// }
+					})
+					.then( res => {
+            console.log(res)
+            if(res.data!='Error'){
+              // alert("登录成功！");
+              // console.log(res);
+              let username=res.data;
+              // self.$router.push({path:'/selfTrainView',query: {username:username}});
+              self.$router.push({path:'/modelTrainView'});
+              sessionStorage.setItem("username",username);
+            }else{
+              this.emailError = true;
+              this.passwordError = true;
+            }
+					})
+					.catch( err => {
+						console.log(err);
+					})
+				} else{
+					alert("填写不能为空！");
+				}
+			},
+			register(){
+				const self = this;
+				if(self.form.username != "" && self.form.useremail != "" && self.form.userpwd != ""){
+					axios({
+						method:'post',
+						url: 'http://localhost:9090/email/register',
+            params: {
+							username: self.form.username,
+              password: self.form.userpwd,
+							email: self.form.useremail
+						}
+					})
+					.then( res => {
+            console.log(res);
+						switch(res.data){
+							case 0:
+								alert("注册成功！");
+								this.login();
+								break;
+							case 1:
+								this.existed = true;
+								break;
+						}
+					})
+					.catch( err => {
+						console.log(err);
+					})
+				} else {
+					alert("填写不能为空！");
+				}
+			}
+		}
+	}
+</script>
 
 <style scoped="scoped">
 	.login-register{
