@@ -54,7 +54,13 @@ public class UserController {
         return iUserService.sendCode(telephone,mode);
     }
 
-
+    /**
+     * 使用验证码登录
+     * @param telephone
+     * @param code
+     * @param session
+     * @return
+     */
     @PostMapping("/loginWithCode")
     public Result loginWithCode(@RequestParam(value = "telephone") String telephone,
                                 @RequestParam(value = "code") String code,
@@ -63,6 +69,22 @@ public class UserController {
         return iUserService.loginWithCode(telephone, code ,session);
     }
 
+    /**
+     * 注册
+     * @param telephone
+     * @param password
+     * @param username
+     * @param code
+     * @return
+     */
+    @PostMapping("/register")
+    public Result register(@RequestParam(value = "telephone") String telephone,
+                           @RequestParam(value = "password") String password,
+                           @RequestParam(value = "username") String username,
+                            @RequestParam(value = "code") String code){
+        Result result=iUserService.register(telephone,password,username,code);
+        return result;
+    }
 
 
 

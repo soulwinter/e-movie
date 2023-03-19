@@ -159,7 +159,47 @@ public class UserServiceImpl implements IUserService {
 
         return Result.ok(map);
     }
+    @Override
+    public Result register(String telephone, String password,String username,String code){
+        Result result=null;
+        try {
+            //2. 校验验证码
+            String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + telephone);
 
+            if (cacheCode == null || !cacheCode.toString().equals(code)){
+                //3.不一致，报错
+                return Result.fail("验证码错误或过期");
+            }
+
+
+            //判断的字段是否为空，若为空 直接返回
+            if(telephone.equals("")){  result = Result.fail("请填写手机号！");return result;}
+            if(password.equals("")){  result = Result.fail("请填写密码！");return result;}
+            if(username.equals("")){  result = Result.fail("请填写用户名！");return result;}
+//            Assert.notNull(telephone, "手机号不能为空");
+//            Assert.notNull(password, "密码不能为空");
+
+            //先通过手机号访问数据库，如果已经注册 则返回错误
+            User userEntity = userDao.getUserByTelephone(telephone);
+
+            if(userEntity!=null){
+                result = Result.fail("该账号已注册！");
+                return result;
+            }
+            User userentity = new User();
+            userentity.setUsername(username);
+            userentity.setPassword(password);
+            userentity.setTelephone(telephone);
+            userDao.register(userentity);
+
+            result = Result.ok();
+        } catch (Exception e) {
+            result = Result.fail(e.getMessage());
+        } finally {
+            return result;
+        }
+
+    }
 
 
 }
