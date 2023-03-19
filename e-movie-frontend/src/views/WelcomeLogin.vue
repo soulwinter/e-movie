@@ -1,287 +1,199 @@
 <template>
-	<div class="WelcomeLogin">
-		<div class="contain">
+  <div class="container">
+    <div class="welcome-login">
+      <h1>欢迎来到电影世界</h1>
+      <!-- 切换登录和注册表单 -->
+      <div class="toggle">
+        <button @click="showLogin = true" :class="{ active: showLogin }">登录</button>
+        <button @click="showLogin = false" :class="{ active: !showLogin }">注册</button>
+      </div>
+      
+      <!-- 登录表单 -->
+      <form v-if="showLogin" @submit.prevent="login" class="form">
+        <div class="input-group">
+          <label for="login-telephone">手机号码</label>
+          <input type="tel" id="login-telephone" v-model="loginData.telephone" required />
+        </div>
+        <div class="input-group">
+          <label for="login-password">密码</label>
+          <input type="password" id="login-password" v-model="loginData.password" pattern="^1[3-9]\d{9}$" required />
+        </div>
+        <button type="submit" class="btn btn-primary">登录</button>
+      </form>
+      
+      <!-- 注册表单 -->
+      <form v-else @submit.prevent="register" class="form">
+        <div class="input-group">
+          <label for="register-username">用户名</label>
+          <input type="text" id="register-username" v-model="registerData.username" required />
+        </div>
+        <div class="input-group">
+          <label for="register-password">密码</label>
+          <input type="password" id="register-password" v-model="registerData.password" required />
+        </div>
+        <div class="input-group"><label for="register-telephone">手机号码</label>
+									<input type="tel" id="register-telephone" v-model="registerData.telephone" pattern="^1[3-9]\d{9}$" required />
 
-<!--      主栏-->
-			<div class="big-box" :class="{active:isLogin}">
-
-<!--        登录栏-->
-				<div class="big-contain" key="bigContainLogin" v-if="isLogin">
-					<div class="btitle">账户登录</div>
-					<div class="bform">
-						<input type="email" placeholder="邮箱" v-model="form.useremail">
-						<span class="errTips" v-if="emailError">* 邮箱填写错误 *</span>
-						<input type="password" placeholder="密码" v-model="form.userpwd">
-						<span class="errTips" v-if="emailError">* 密码填写错误 *</span>
-					</div>
-					<button class="bbutton" @click="login">登录</button>
-				</div>
-
-<!--        注册栏-->
-				<div class="big-contain" key="bigContainRegister" v-else>
-					<div class="btitle">创建账户</div>
-					<div class="bform">
-						<input type="text" placeholder="用户名" v-model="form.username">
-						<span class="errTips" v-if="existed">* 用户名已经存在！ *</span>
-						<input type="email" placeholder="邮箱" v-model="form.useremail">
-						<input type="password" placeholder="密码" v-model="form.userpwd">
-					</div>
-					<button class="bbutton" @click="register">注册</button>
-				</div>
-
-
-			</div>
-<!--      侧栏-->
-			<div class="small-box" :class="{active:isLogin}">
-				<div class="small-contain" key="smallContainRegister" v-if="isLogin">
-					<div class="stitle">你好，朋友!</div>
-					<p class="scontent">开始注册，和我们一起旅行</p>
-					<button class="sbutton" @click="changeType">注册</button>
-				</div>
-				<div class="small-contain" key="smallContainLogin" v-else>
-					<div class="stitle">欢迎回来!</div>
-					<p class="scontent">登录测试你的软件吧~</p>
-					<button class="sbutton" @click="changeType">登录</button>
-				</div>
-			</div>
-
-		</div>
-	</div>
+        </div>
+        <button type="submit" class="btn btn-primary">注册</button>
+      </form>
+    </div>
+  </div>
 </template>
 
+
 <script>
-	import axios from "axios";
+import axios from 'axios';
 
-  export default{
-		name:'login-register',
-		data(){
-			return {
-				isLogin:false,
-				emailError: false,
-				passwordError: false,
-				existed: false,
-				form:{
-					username:'',
-					useremail:'',
-					userpwd:''
-				}
-			}
-		},
-		methods:{
-			changeType() {
-				this.isLogin = !this.isLogin
-				this.form.username = ''
-				this.form.useremail = ''
-				this.form.userpwd = ''
-			},
-			login() {
-				const self = this;
-				if (self.form.useremail != "" && self.form.userpwd != "") {
-          // console.log(self.form.useremail)
-
-					axios({
-						method:'get',
-						url: 'http://localhost:9090/email/login',
-            params: {email:self.form.useremail,password:self.form.userpwd },
-
-						// data: {
-						// 	email: self.form.useremail,
-						// 	password: self.form.userpwd
-						// }
-					})
-					.then( res => {
-            console.log(res)
-            if(res.data!='Error'){
-              // alert("登录成功！");
-              // console.log(res);
-              let username=res.data;
-              // self.$router.push({path:'/selfTrainView',query: {username:username}});
-              self.$router.push({path:'/modelTrainView'});
-              sessionStorage.setItem("username",username);
-            }else{
-              this.emailError = true;
-              this.passwordError = true;
-            }
-					})
-					.catch( err => {
-						console.log(err);
-					})
-				} else{
-					alert("填写不能为空！");
-				}
-			},
-			register(){
-				const self = this;
-				if(self.form.username != "" && self.form.useremail != "" && self.form.userpwd != ""){
-					axios({
-						method:'post',
-						url: 'http://localhost:9090/email/register',
-            params: {
-							username: self.form.username,
-              password: self.form.userpwd,
-							email: self.form.useremail
-						}
-					})
-					.then( res => {
-            console.log(res);
-						switch(res.data){
-							case 0:
-								alert("注册成功！");
-								this.login();
-								break;
-							case 1:
-								this.existed = true;
-								break;
-						}
-					})
-					.catch( err => {
-						console.log(err);
-					})
-				} else {
-					alert("填写不能为空！");
-				}
-			}
-		}
-	}
+export default {
+  data() {
+    return {
+      showLogin: true,
+      loginData: {
+        telephone: '',
+        password: '',
+      },
+      registerData: {
+        username: '',
+        password: '',
+        telephone: '',
+      },
+    };
+  },
+  methods: {
+    // 登录函数
+    async login() {
+      try {
+        const response = await axios.post('http://localhost:8081/user/login', this.loginData);
+        if (response.data.success) {
+          // 登录成功，在此处处理数据
+          console.log('登录成功');
+        } else {
+          // 处理登录失败
+          console.error(response.data.errorMsg);
+        }
+      } catch (error) {
+        console.error('错误：', error);
+      }
+    },
+    // 注册函数
+    async register() {
+      try {
+        const response = await axios.post('http://localhost:8081/user/register', this.registerData);
+        if (response.data.success) {
+          // 注册成功，在此处处理数据
+          console.log('注册成功');
+        } else {
+          // 处理注册失败
+          console.error(response.data.errorMsg);
+        }
+      } catch (error) {
+        console.error('错误：', error);
+      }
+    },
+  },
+};
 </script>
 
-<style scoped="scoped">
-	.login-register{
-    background-color: #f2f3f5;
-		width: 100vw;
-		height: 100vh;
-		box-sizing: border-box;
-	}
-	.contain{
-		width: 60%;
-		height: 60%;
-		position: relative;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%,-50%);
-		background-color: #fff;
-		border-radius: 20px;
-		/*box-shadow: 0 0 3px #f0f0f0,*/
-		/*			0 0 6px #f0f0f0;*/
+<style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
 
-    border:1px solid #eeeeee;
-    box-shadow: darkgrey 0px 0px 20px 5px;
+.welcome-login {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
 
-	}
-	.big-box{
-		width: 70%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 30%;
-		transform: translateX(0%);
-		transition: all 1s;
-	}
-	.big-contain{
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-	.btitle{
-		font-size: 1.5em;
-		font-weight: bold;
-		color: rgb(57,167,176);
-	}
-	.bform{
-		width: 100%;
-		height: 40%;
-		padding: 2em 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-		align-items: center;
-	}
-	.bform .errTips{
-		display: block;
-		width: 50%;
-		text-align: left;
-		color: red;
-		font-size: 0.7em;
-		margin-left: 1em;
-	}
-	.bform input{
-		width: 50%;
-		height: 30px;
-		border: none;
-		outline: none;
-		border-radius: 10px;
-		padding-left: 2em;
-		background-color: #f0f0f0;
-	}
-	.bbutton{
-		width: 20%;
-		height: 40px;
-		border-radius: 24px;
-		border: none;
-		outline: none;
-		background-color: rgb(57,167,176);
-		color: #fff;
-		font-size: 0.9em;
-		cursor: pointer;
-	}
-	.small-box{
-		width: 30%;
-		height: 100%;
-		background: linear-gradient(135deg,rgb(57,167,176),rgb(56,183,145));
-		position: absolute;
-		top: 0;
-		left: 0;
-		transform: translateX(0%);
-		transition: all 1s;
-		border-top-left-radius: inherit;
-		border-bottom-left-radius: inherit;
-	}
-	.small-contain{
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-	.stitle{
-		font-size: 1.5em;
-		font-weight: bold;
-		color: #fff;
-	}
-	.scontent{
-		font-size: 0.8em;
-		color: #fff;
-		text-align: center;
-		padding: 2em 4em;
-		line-height: 1.7em;
-	}
-	.sbutton{
-		width: 60%;
-		height: 40px;
-		border-radius: 24px;
-		border: 1px solid #fff;
-		outline: none;
-		background-color: transparent;
-		color: #fff;
-		font-size: 0.9em;
-		cursor: pointer;
-	}
-	
-	.big-box.active{
-		left: 0;
-		transition: all 0.5s;
-	}
-	.small-box.active{
-		left: 100%;
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-		border-top-right-radius: inherit;
-		border-bottom-right-radius: inherit;
-		transform: translateX(-100%);
-		transition: all 1s;
-	}
+.toggle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.toggle button {
+  flex: 1;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+}
+
+.toggle button.active {
+  border-bottom: 2px solid #2196f3;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0d8bf2;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.4);
+}
+
+.btn:active {
+  background-color: #0d8bf2;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ADDITIONAL CSS FOR ANIMATION */
+.toggle {
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle button {
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle button.active {
+  transform: translateY(-5px);
+}
+
+.welcome-login h1 {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #2196f3;
+}
 </style>
