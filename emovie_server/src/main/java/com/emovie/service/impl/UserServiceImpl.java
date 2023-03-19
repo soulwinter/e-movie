@@ -1,17 +1,29 @@
 package com.emovie.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSONUtil;
 import com.emovie.dao.UserDao;
+import com.emovie.dto.UserDTO;
 import com.emovie.entity.User;
 import com.emovie.service.IUserService;
+import com.emovie.util.Constants;
 import com.emovie.util.MD5;
 import com.emovie.util.RegexUtils;
 import com.emovie.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import static com.emovie.util.RedisConstants.*;
 
 @Service
 @Slf4j
@@ -20,8 +32,11 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     UserDao userDao;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @Override
-    public Result login(String telephone, String password) {
+    public Result loginWithPassword(String telephone, String password) {
 
 
         Result result=null;
@@ -43,20 +58,108 @@ public class UserServiceImpl implements IUserService {
             //如果找到啦 判断有没有token
             if(userEntity.getToken() == null || userEntity.getToken().trim().equals("")){
                 //没有token 造一个给他 并更新到数据库中
-                log.info("没有tonken");
                 String token = MD5.GetMD5Code(telephone + password + Calendar.getInstance().getTimeInMillis());
-                log.info("生成token:"+token);
                 userEntity.setToken(token);
                 userDao.updateUser(userEntity);
             }
 
-            result = Result.ok();
+            HashMap<String, String> map = new HashMap<>();
+            map.put("token",userEntity.getUsername());
+            map.put("username",userEntity.getUsername());
+            result = Result.ok(map);
         } catch (Exception e) {
             result = Result.fail(e.getMessage());
         } finally {
 
             return result;
         }
+    }
+
+
+
+    @Override
+    public Result sendCode(String phone,String mode) {
+
+        //1. 校验手机号
+        if (RegexUtils.isPhoneInvalid(phone)) {
+            //2.如果不符合，返回错误信息
+            return Result.fail("手机号格式错误");
+        }
+
+        //3. 符合，生成验证码
+        String code = RandomUtil.randomNumbers(6);
+
+        //4. 保存验证码到redis
+        //登录模式
+        if(mode.equals(Constants.LOGIN_MODE)){
+            stringRedisTemplate.opsForValue().set(LOGIN_CODE_KEY+phone,code,CODE_TTL, TimeUnit.MINUTES);
+        }
+        else if(mode.equals(Constants.REGISTER_MODE)){
+            stringRedisTemplate.opsForValue().set(REGISTER_CODE_KEY+phone,code,CODE_TTL, TimeUnit.MINUTES);
+        }
+
+
+        //5. 发送验证码
+        log.debug("发送短信验证码成功，验证码:{}",code);
+
+        //返回ok
+        return Result.ok();
 
     }
+
+
+    @Override
+    public Result loginWithCode(String telephone, String code, HttpSession session) {
+        //2. 校验验证码
+        String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + telephone);
+
+        if (cacheCode == null || !cacheCode.toString().equals(code)){
+            //3.不一致，报错
+            return Result.fail("验证码错误或过期");
+        }
+
+        //4.一致，根据手机号查询用户
+        User userEntity = userDao.getUserByTelephone(telephone);
+
+        //5. 判断用户是否存在
+        if (userEntity == null){
+            //6.不存在 返回手机号未注册
+            return Result.fail("手机号未注册！");
+        }
+
+        //7.保存用户信息到redis
+        //7.1 生成token，作为登录令牌
+        if(userEntity.getToken() == null || userEntity.getToken().trim().equals("")){
+            //没有token 造一个给他 并更新到数据库中
+            log.info("没有tonken");
+            String token = MD5.GetMD5Code(telephone + userEntity.getPassword() + Calendar.getInstance().getTimeInMillis());
+            log.info("生成token:"+token);
+            userEntity.setToken(token);
+            userDao.updateUser(userEntity);
+        }
+        //7.2 将User对象转为String存储
+        UserDTO userDTO = BeanUtil.copyProperties(userEntity, UserDTO.class);
+//        Map<String, Object> userMap = BeanUtil.beanToMap(userDTO, new HashMap<>(),
+//                CopyOptions.create()
+//                        .setIgnoreNullValue(true)
+//                        .setFieldValueEditor((filedName, fieldValue) -> fieldValue.toString()));
+
+        //7.3 存储
+        String token=userEntity.getToken();
+//        stringRedisTemplate.opsForHash().putAll(LOGIN_USER_KEY+token,userMap);
+        stringRedisTemplate.opsForValue().set(LOGIN_USER_KEY+token,JSONUtil.toJsonStr(userDTO));
+
+        //7.4 设置token的有效期
+        stringRedisTemplate.expire(LOGIN_USER_KEY+token,LOGIN_USER_TTL,TimeUnit.MINUTES);
+
+        //8.返回User信息
+        HashMap<String, String> map = new HashMap<>();
+        map.put("token",token);
+        map.put("username",userEntity.getUsername());
+
+        return Result.ok(map);
+    }
+
+
+
 }
