@@ -8,7 +8,7 @@
         <button @click="showLogin = 2" :class="{ active: showLogin === 2 }">验证码登录</button>
         <button @click="showLogin = 3" :class="{ active: showLogin === 3 }">注册</button>
       </div>
-      
+
       <!-- 密码登录表单 -->
       <form v-if="showLogin === 1" @submit.prevent="login" class="form">
         <div class="input-group">
@@ -38,7 +38,7 @@
         <button type="submit" class="btn btn-primary">登录</button>
       </form>
 
-      
+
       <!-- 注册表单 -->
       <form  v-if="showLogin === 3" @submit.prevent="register" class="form">
         <div class="input-group">
@@ -103,7 +103,7 @@ export default {
           // 登录成功，在此处处理数据
           alert('登录成功');
           // 保存 token
-          this.$store.dispatch('saveToken', response.data.data.token);    
+          this.$store.dispatch('saveToken', response.data.data.token);
           this.$router.push('/home');
         } else {
           // 处理登录失败
@@ -123,7 +123,7 @@ export default {
         }
       }
     },
-     // 验证码登录函数
+    // 验证码登录函数
     async loginWithCode() {
       try {
         let formData=new FormData();
@@ -134,7 +134,7 @@ export default {
           // 登录成功，在此处处理数据
           alert('登录成功');
           // 保存 token
-          this.$store.dispatch('saveToken', response.data.data.token);   
+          this.$store.dispatch('saveToken', response.data.data.token);
           this.$router.push('/home');
         } else {
           // 处理登录失败

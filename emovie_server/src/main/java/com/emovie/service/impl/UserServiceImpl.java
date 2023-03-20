@@ -80,9 +80,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Result sendCode(String phone,String mode) {
 
+        System.out.println("phone:"+phone);
         //1. 校验手机号
         if (RegexUtils.isPhoneInvalid(phone)) {
             //2.如果不符合，返回错误信息
+            log.error("手机号格式错误");
             return Result.fail("手机号格式错误");
         }
 
@@ -164,7 +166,7 @@ public class UserServiceImpl implements IUserService {
         Result result=null;
         try {
             //2. 校验验证码
-            String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + telephone);
+            String cacheCode = stringRedisTemplate.opsForValue().get(REGISTER_CODE_KEY + telephone);
 
             if (cacheCode == null || !cacheCode.toString().equals(code)){
                 //3.不一致，报错
