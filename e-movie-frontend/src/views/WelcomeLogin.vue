@@ -28,7 +28,7 @@
           <label style="text-align: left;" for="loginWithCode-telephone">手机号码</label>
           <div style="display: flex; justify-content: space-between;">
             <input type="tel" id="loginWithCode-telephone" v-model="loginWithCodeData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  style="width: 80%; margin-right: 5px;" required />
-            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('login_mode')">获取验证码</button>
+            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('login_mode')" :disabled="countDown > 0">{{ countDown > 0 ? countDown + '秒后重新获取' : '获取验证码' }}</button>
           </div>
         </div>
         <div class="input-group">
@@ -53,7 +53,7 @@
           <label style="text-align: left;" for="register-telephone">手机号码</label>
           <div style="display: flex; justify-content: space-between;">
             <input type="tel" id="register-telephone" v-model="registerData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  style="width: 80%; margin-right: 5px;" required />
-            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('register_mode')">获取验证码</button>
+            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('register_mode')" :disabled="countDown > 0">{{ countDown > 0 ? countDown + '秒后重新获取' : '获取验证码' }}</button>
           </div>
         </div>
         <div class="input-group">
@@ -88,6 +88,7 @@ export default {
         telephone: '',
         code: '',
       },
+      countDown: 0,
     };
   },
   methods: {
@@ -193,6 +194,14 @@ export default {
         if (response.data.success) {
           // 获取验证码成功，在此处处理数据
           alert('获取验证码成功');
+          this.countDown = 60;
+          const timer = setInterval(() => {
+            if (this.countDown > 0) {
+              this.countDown--;
+            } else {
+              clearInterval(timer);
+            }
+          }, 1000);
         } else {
           // 处理获取验证码失败
           alert(response.data.errorMsg);
