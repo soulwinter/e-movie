@@ -1,6 +1,7 @@
 package com.emovie.dao;
 
 import com.emovie.entity.User;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -18,6 +19,8 @@ public interface UserDao {
 
     @Update("update tb_user set username=#{username},telephone=#{telephone},password=#{password},token=#{token}")
     void updateUser(User user);
+    @Insert("insert into tb_user (username,password,telephone) values (#{username},#{password},#{telephone})" )
+    int register(User user);
 
     
 }

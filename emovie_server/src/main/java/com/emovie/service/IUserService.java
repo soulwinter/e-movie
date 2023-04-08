@@ -20,7 +20,7 @@ public interface IUserService {
     /**
      * 发送验证码
      * @param telephone
-     * @param session
+     * @param mode
      * @return
      */
     Result sendCode(String telephone,String mode);
@@ -33,4 +33,13 @@ public interface IUserService {
      * @return
      */
     Result loginWithCode(String phone, String code, HttpSession session);
+
+    /**
+     * 使用注册功能
+     * @param telephone
+     * @param code
+     * @return
+     */
+    Result register(String telephone, String password,String username,String code);
+
 }
