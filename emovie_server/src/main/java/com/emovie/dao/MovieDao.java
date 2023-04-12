@@ -28,5 +28,8 @@ public interface MovieDao {
 //    查询电影关键词 传参名 movie_id
     @Select("select name as keyword from keyword,movie_keyword where movie_keyword.id=#{movie_id} and movie_keyword.Key_id=keyword.id")
     public List<String> getKeyword(int movie_id);
+//    查询所有电影的信息
+    @Select("select * from movie")
+    public List<Movie> getAll();
 
 }

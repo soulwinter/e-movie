@@ -10,4 +10,6 @@ public interface IMovieService {
 
 
     Result detailInfo(int id);
+
+    Result allInfo();
 }

@@ -47,6 +47,18 @@ public class MovieController {
         return movieService.detailInfo(id);
     }
 
+    //说明是什么方法(可以理解为方法注释)
+    @ApiOperation("获得所有电影信息")
+    //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
+    @ApiImplicitParams({@ApiImplicitParam(required=true)})
+    @GetMapping("/allInfo")
+    public Result allInfo(){
+
+        return movieService.allInfo();
+    }
+
+
+
 
 
 

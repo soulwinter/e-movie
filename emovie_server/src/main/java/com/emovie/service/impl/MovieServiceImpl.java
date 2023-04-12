@@ -2,6 +2,7 @@ package com.emovie.service.impl;
 
 import com.emovie.dao.MovieDao;
 import com.emovie.dto.MovieDTO;
+import com.emovie.entity.Movie;
 import com.emovie.entity.User;
 import com.emovie.service.IMovieService;
 import com.emovie.util.MD5;
@@ -14,6 +15,9 @@ import org.springframework.util.Assert;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+
+import static com.sun.deploy.uitoolkit.impl.awt.AWTClientPrintHelper.print;
 
 
 @Service
@@ -49,4 +53,24 @@ public class MovieServiceImpl implements IMovieService {
 
 
     }
+
+    @Override
+    public Result allInfo() {
+        Result result=null;
+        try {
+
+            //电影表的所有信息
+            List<Movie> movieList = movieDao.getAll();
+
+
+
+            result = Result.ok(movieList);
+        } catch (Exception e) {
+            result = Result.fail(e.getMessage());
+        } finally {
+
+            return result;
+        }
+    }
+
 }
