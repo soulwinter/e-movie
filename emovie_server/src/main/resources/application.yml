@@ -9,8 +9,9 @@ spring:
     url: jdbc:mysql://121.4.113.134:3306/emovie?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: root
+
   redis:
-    host: 121.37.235.114
+    host: 8.130.92.141
     port: 6379
     password: root
     lettuce:

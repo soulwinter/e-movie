@@ -11,15 +11,15 @@ import org.springframework.context.annotation.Bean;
 public interface UserDao {
 
 
-    @Select("select * from tb_user where telephone=#{telephone}")
+    @Select("select * from user where telephone=#{telephone}")
     public User getUserByTelephone(String telephone);
 
-    @Select("select * from tb_user where telephone=#{telephone} and password=#{password}")
+    @Select("select * from user where telephone=#{telephone} and password=#{password}")
     public User getUserByTelephoneAndPassword(String telephone, String password);
 
-    @Update("update tb_user set username=#{username},telephone=#{telephone},password=#{password},token=#{token}")
+    @Update("update user set username=#{username},telephone=#{telephone},password=#{password},token=#{token}")
     void updateUser(User user);
-    @Insert("insert into tb_user (username,password,telephone) values (#{username},#{password},#{telephone})" )
+    @Insert("insert into user (username,password,telephone) values (#{username},#{password},#{telephone})" )
     int register(User user);
 
     
