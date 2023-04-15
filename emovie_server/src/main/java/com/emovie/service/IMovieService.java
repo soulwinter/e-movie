@@ -11,5 +11,5 @@ public interface IMovieService {
 
     Result detailInfo(int id);
 
-    Result allInfo();
+    Result listInfo(int requestPage,int movieNumberPerPage);
 }

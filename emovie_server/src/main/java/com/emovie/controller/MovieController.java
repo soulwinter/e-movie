@@ -48,13 +48,14 @@ public class MovieController {
     }
 
     //说明是什么方法(可以理解为方法注释)
-    @ApiOperation("获得所有电影信息")
+    @ApiOperation("获得分页电影信息")
     //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
-    @ApiImplicitParams({@ApiImplicitParam(required=true)})
-    @GetMapping("/allInfo")
-    public Result allInfo(){
+    @ApiImplicitParams({@ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
+            @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数",required = true)})
+    @GetMapping("/listInfo/{requestPage}/{movieNumberPerPage}")
+    public Result listInfo(@PathVariable int requestPage,@PathVariable int movieNumberPerPage){
 
-        return movieService.allInfo();
+        return movieService.listInfo(requestPage,movieNumberPerPage);
     }
 
 

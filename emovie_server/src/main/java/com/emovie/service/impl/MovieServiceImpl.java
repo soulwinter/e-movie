@@ -55,16 +55,13 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
-    public Result allInfo() {
+    public Result listInfo(int requestPage,int movieNumberPerPage) {
         Result result=null;
         try {
 
-            //电影表的所有信息
-            List<Movie> movieList = movieDao.getAll();
+            List<Movie> movies = movieDao.getLimit((requestPage - 1) * movieNumberPerPage,movieNumberPerPage);
 
-
-
-            result = Result.ok(movieList);
+            result = Result.ok(movies);
         } catch (Exception e) {
             result = Result.fail(e.getMessage());
         } finally {
