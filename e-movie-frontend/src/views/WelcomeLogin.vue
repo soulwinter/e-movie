@@ -1,5 +1,7 @@
 <template>
+  <HeadComponent />
   <div class="container">
+    
     <div class="welcome-login">
       <h1>欢迎来到电影世界</h1>
       <!-- 切换登录和注册表单 -->
@@ -69,8 +71,12 @@
 
 <script>
 import axios from 'axios';
+import HeadComponent from '@/components/HeadComponent.vue';
 
 export default {
+  components: {
+    HeadComponent,
+  },
   data() {
     return {
       showLogin: 1,

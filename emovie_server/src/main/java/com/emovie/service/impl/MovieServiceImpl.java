@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.sun.deploy.uitoolkit.impl.awt.AWTClientPrintHelper.print;
 
 
 @Service
@@ -60,7 +59,7 @@ public class MovieServiceImpl implements IMovieService {
         try {
 
             List<Movie> movies = movieDao.getLimit((requestPage - 1) * movieNumberPerPage,movieNumberPerPage);
-
+            System.out.println(movies);
             result = Result.ok(movies);
         } catch (Exception e) {
             result = Result.fail(e.getMessage());
