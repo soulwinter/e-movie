@@ -1,6 +1,12 @@
 <template>
     <HeadComponent />
     <div class="movie-list">
+      <router-link
+      v-for="movie in movies"
+      :key="movie.id"
+      :to="{ name: 'MovieDetails', params: { id: movie.id } }"
+      class="movie-link"
+    >
       <div class="movie-card" v-for="movie in movies" :key="movie.id">
         <h1 class="movie-title">{{ movie.title }}</h1>
         <p class="movie-overview">{{ movie.overview }}</p>
@@ -15,8 +21,9 @@
           <div class="info-badge" v-if="movie.budget !== 0">${{ movie.budget }} 预算</div>
           <div class="info-badge" v-if="movie.revenue !== 0">${{ movie.revenue }} 票房收入</div>
         </div>
-      </div>
       
+      </div>
+    </router-link>
     </div>
     <button class="pagination-btn" @click="loadMoreMovies">加载更多电影</button>
   </template>
@@ -95,6 +102,10 @@
     width: 100%;
     transition: transform 0.3s ease-in-out;
     break-inside: avoid;
+  }
+  .movie-link {
+    text-decoration: none; /* 取消下划线 */
+    color: inherit;
   }
 
   .movie-card:hover {
