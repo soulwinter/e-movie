@@ -14,5 +14,4 @@ public class User {
 
     private String deleted;
 
-    private String token;
 }

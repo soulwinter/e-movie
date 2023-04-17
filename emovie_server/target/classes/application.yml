@@ -34,3 +34,4 @@ logging:
 #mybatis-plus:
 #  type-aliases-package: com.emovie.entity # 别名扫描包
 
+#-------------------JWT--------------------
