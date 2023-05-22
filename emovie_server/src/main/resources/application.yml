@@ -8,7 +8,7 @@ spring:
     #写云数据库---------------------------------------------------------------
     url: jdbc:mysql://121.4.113.134:3306/emovie?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: shiwo2002625
 
   redis:
     host: 8.130.92.141
