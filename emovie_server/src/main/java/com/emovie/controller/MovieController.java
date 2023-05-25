@@ -58,7 +58,7 @@ public class MovieController {
     }
 
     @PostMapping("/searchRecommendation")
-    public Result searchRecommendation(@RequestParam String movieInfoString){
+    public Result searchRecommendation(@RequestBody String movieInfoString){
         System.out.println(movieInfoString);
         return movieService.searchRecommendation(movieInfoString);
     }
