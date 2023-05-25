@@ -1,7 +1,11 @@
 package com.emovie.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.emovie.dao.MovieDao;
 import com.emovie.dto.MovieDTO;
+import com.emovie.dto.MovieDocument;
+import com.emovie.dto.SearchParam;
 import com.emovie.entity.Movie;
 import com.emovie.entity.User;
 import com.emovie.service.IMovieService;
@@ -9,10 +13,22 @@ import com.emovie.util.MD5;
 import com.emovie.util.RegexUtils;
 import com.emovie.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +41,10 @@ public class MovieServiceImpl implements IMovieService {
 
     @Autowired
     MovieDao movieDao;
+
+    @Autowired
+//    @Qualifier("restHighLevelClient")
+    RestHighLevelClient restHighLevelClient;
 
 
     @Override
@@ -54,21 +74,106 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
-    public Result listInfo(int requestPage,int movieNumberPerPage) {
+    public Result listInfo(SearchParam param) {
+        Result result=null;
+
+        try {
+            //1.准备request
+            SearchRequest request = new SearchRequest("movie");
+
+            //2.准备DSL
+            //2.1query
+            String movieInfoString = param.getMovieInfoString();
+            if(StrUtil.isNotBlank(movieInfoString)){
+                request.source().query(QueryBuilders.matchQuery("title", movieInfoString));
+            }else{
+                request.source().query(QueryBuilders.matchAllQuery());
+            }
+            //2.2分页
+            int page= param.getRequestPage();
+            int size= param.getMovieNumberPerPage();
+            request.source().from((page-1)*size).size(size);
+            //3.发送请求
+            SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+//            System.out.println(response);
+            //4.解析响应
+            result=handleResponse(response);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }finally {
+            return result;
+        }
+
+
+
+    }
+
+    @Override
+    public Result searchRecommendation(String movieInfoString) {
         Result result=null;
         try {
+            //1.准备request
+            SearchRequest request = new SearchRequest("movie");
 
-            List<Movie> movies = movieDao.getLimit((requestPage - 1) * movieNumberPerPage,movieNumberPerPage);
-            System.out.println(movies);
-            result = Result.ok(movies);
-        } catch (Exception e) {
-            result = Result.fail(e.getMessage());
-        } finally {
-
+            //2.准备DSL
+            //2.1query
+            if(StrUtil.isNotBlank(movieInfoString)){
+                request.source().query(QueryBuilders.matchQuery("title", movieInfoString));
+            }else{
+                request.source().query(QueryBuilders.matchAllQuery());
+            }
+            //2.2分页
+            request.source().from(0).size(10);
+            //3.发送请求
+            SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+//            System.out.println(response);
+            //4.解析响应
+            SearchHit[] hits = response.getHits().getHits();
+            ArrayList<Movie> movies = new ArrayList<>();
+            for (SearchHit hit : hits) {
+                MovieDocument movieDocument = JSONUtil.toBean(hit.getSourceAsString(), MovieDocument.class);
+                Movie movie = new Movie();
+                movie.setId(movieDocument.getId());
+                movie.setTitle(movieDocument.getTitle());
+                movies.add(movie);
+            }
+            result=Result.ok(movies,response.getHits().getTotalHits().value);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }finally {
             return result;
         }
     }
 
+    private Result handleResponse(SearchResponse response) {
+        SearchHits searchHits = response.getHits();
+        //4.1获取总条数
+        long total = searchHits.getTotalHits().value;
+        log.info("总条数："+total);
+        //4.2文档数组
+        SearchHit[] hits = searchHits.getHits();
+        //4.3遍历获得id
+        ArrayList<Double> ids = new ArrayList<>();
+        for (SearchHit hit : hits) {
+            //获取文档source
+            String json = hit.getSourceAsString();
+            //反序列化
+            MovieDocument movieDocument = JSONUtil.toBean(json, MovieDocument.class);
+            //获取id装入ids中
+            ids.add(movieDocument.getId());
+            //获取高亮结果
+
+            //
+        }
+        //通过ids查找数据库数据
+        String json = JSONUtil.toJsonStr(ids);
+        System.out.println(json.substring(1, json.length() - 1));
+        List<Movie> result = movieDao.getByIds(json.substring(1, json.length() - 1));
+//        List<Movie> result = movieDao.getByIds2(ids);
+
+        //返回list
+        return Result.ok(result,total);
+    }
 
 
 }

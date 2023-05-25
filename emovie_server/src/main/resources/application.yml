@@ -25,6 +25,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher #解决swagger和springboot冲突问题
+  elasticsearch:
+    uris: http://8.130.92.141:9200
 
 
 logging:

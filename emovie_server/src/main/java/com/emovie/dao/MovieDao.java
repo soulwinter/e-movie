@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,12 +33,15 @@ public interface MovieDao {
     //    查询所有电影的信息
     @Select("select * from movie")
     public List<Movie> getAll();
-    //    查询电影总数
-    @Select("select count(*) from movie")
-    public int getSum();
+
     //    查询从n开始的m条电影数据 传参名 movie_id
     @Select("select * from movie limit #{n},#{m}")
     public List<Movie> getLimit (@Param("n")int n,@Param("m")int m);
 
+    @Select("select * from movie where id in(${listJson})")
+    public List<Movie> getByIds(String listJson);
+
+    @Select("select * from movie where id in(${list})")
+    public List<Movie> getByIds2(ArrayList<Double> list);
 
 }

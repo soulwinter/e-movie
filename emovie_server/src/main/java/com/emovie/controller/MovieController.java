@@ -1,5 +1,6 @@
 package com.emovie.controller;
 
+import com.emovie.dto.SearchParam;
 import com.emovie.service.IMovieService;
 import com.emovie.service.IUserService;
 import com.emovie.util.Result;
@@ -40,13 +41,11 @@ public class MovieController {
     @ApiOperation("获得分页电影信息")
     @ApiImplicitParams({@ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
             @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数",required = true)})
-    @GetMapping("/listInfo/{requestPage}/{movieNumberPerPage}")
-    public Result listInfo(@PathVariable int requestPage,@PathVariable int movieNumberPerPage){
-
-        return movieService.listInfo(requestPage,movieNumberPerPage);
+    @PostMapping("/listInfo")
+    public Result listInfo(@RequestBody SearchParam param){
+        System.out.println(param);
+        return movieService.listInfo(param);
     }
-
-
 
 
     //说明是什么方法(可以理解为方法注释)
@@ -58,7 +57,11 @@ public class MovieController {
         return movieService.detailInfo(id);
     }
 
-    
+    @PostMapping("/searchRecommendation")
+    public Result searchRecommendation(@RequestParam String movieInfoString){
+        System.out.println(movieInfoString);
+        return movieService.searchRecommendation(movieInfoString);
+    }
 
 
 
