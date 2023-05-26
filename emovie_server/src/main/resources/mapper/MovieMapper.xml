@@ -4,27 +4,45 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--绑定一个对应的Dao/Map接口-->
 <mapper namespace="com.emovie.dao.MovieDao">
-<!--    <resultMap id="RecordMap" type="com.emovie.entity.Movie">-->
-<!--        <id column="id" property="id"></id>-->
-<!--        <result column="url" property="url"></result>-->
-<!--        <result column="caption" property="caption"></result>-->
-<!--    </resultMap>-->
-    <select id="getMovieByIDList" >
+    <resultMap id="RecordMap" type="com.emovie.entity.Movie">
+        <id column="id" property="id"></id>
+        <result column="adult" property="adult"></result>
+        <result column="budget" property="budget"></result>
+        <result column="homepage" property="homepage"></result>
+        <result column="imgbId" property="imgbId"></result>
+        <result column="originalLanguage" property="originalLanguage"></result>
+        <result column="originalTitle" property="originalTitle"></result>
+        <result column="overview" property="overview"></result>
+        <result column="popularity" property="popularity"></result>
+        <result column="posterPath" property="posterPath"></result>
+        <result column="releaseDate" property="releaseDate"></result>
+        <result column="revenue" property="revenue"></result>
+        <result column="runtime" property="runtime"></result>
+        <result column="status" property="status"></result>
+        <result column="tagline" property="tagline"></result>
+        <result column="title" property="title"></result>
+        <result column="voteAverage" property="voteAverage"></result>
+        <result column="voteCount" property="voteCount"></result>
+        <result column="allCrew" property="allCrew"></result>
+        <result column="deleted" property="deleted"></result>
+
+    </resultMap>
+    <select id="getMovieByIDList" resultType="com.emovie.entity.Movie">
         select *
         from movie
         where id in
-        <foreach item="idList" index="index" collection="list" open="(" separator="," close=")">
-            #{idList}
+        <foreach item="id" index="index" collection="idList" open="(" separator="," close=")">
+            #{id}
         </foreach>
     </select>
 
-    <select id="getUserRecommend" >
+    <select id="getUserRecommend" resultType="com.emovie.entity.Movie">
         select *
         from movie
         where id in
             (
-                select recommendId from user_recommend_svd where userid=#{userId} order by predictScore desc limit ${pageSize}
-                         offset ${offset}
+                select a.* from(select recommendId from user_recommend_svd where userid=#{userId} order by predictScore desc limit ${pageSize}
+                         offset ${offset})a
             )
     </select>
 
