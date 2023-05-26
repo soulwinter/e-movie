@@ -44,4 +44,21 @@ public interface MovieDao {
     @Select("select * from movie where id in(${list})")
     public List<Movie> getByIds2(ArrayList<Double> list);
 
+    /** @Description: 以下代码为陈航所写
+     * @Author: 陈航
+     * @Date: 2023/5/23 21:27
+     */
+    //查找某用户过去的5条评分记录
+    @Select("select * from vote where user_id=#{user_id} order by `timestamp` desc LIMIT 5;")
+    public List<Vote> getUserVote (int user_id);
+
+    //查找喜欢这部电影的人也喜欢的电影，用于推荐，最多25个
+    @Select("SELECT similarId from movie_similar_svd where movieid=#{movie_id} ORDER BY similardegree DESC; ")
+    public List<Integer> getSimilarMovie(@Param("movie_id") int movie_id);
+
+    //查找推荐给用户的电影,这是分页的，总共有每个用户推100个
+    public List<Movie> getUserRecommend(@Param("userId") int userId,@Param("pageSize")int pageSize, @Param("offset")int offset);
+
+    //根据id获得电影
+    public List<Movie> getMovieByIDList(@Param("idList") List<Integer> idList);
 }

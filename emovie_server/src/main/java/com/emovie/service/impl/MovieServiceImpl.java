@@ -175,5 +175,46 @@ public class MovieServiceImpl implements IMovieService {
         return Result.ok(result,total);
     }
 
+    /** @Description: 以下代码为陈航所写
+     * @Author: 陈航
+     * @Date: 2023/5/26 14:44
+     */
+    @Override
+    //TODO 根据用户的打分更新对其电影的推荐
+    public Result updateRecommend(int userId,int movieId){
+        Result result=null;
+        return result;
+    }
 
+    @Override
+    //喜欢这部电影的人也喜欢的电影，用于推荐
+    public Result getSimilarMovie(int movie_id){
+        Result result=null;
+        try{
+            List<Integer> similarIds=movieDao.getSimilarMovie(movie_id);
+            //TODO 这里想做与基于内容的结合，与es的结果进行融合得到一个最终的结果，对于不在rating中的电影，直接返回es搜索的结果;
+            List<Integer> resultIds=similarIds;
+            List<Movie> data=movieDao.getMovieByIDList(resultIds);
+            result = Result.ok(data);
+        }catch (Exception e) {
+            result = Result.fail(e.getMessage());
+        } finally {
+
+            return result;
+        }
+    }
+
+    @Override
+    //在首页给该用户推荐100个电影
+    public Result getUserRecommend(int userId, int pageSize, int offset){
+        Result result=null;
+        try{
+            List<Movie>data=movieDao.getUserRecommend(userId,pageSize,offset);
+            result=Result.ok(data);
+        }catch (Exception e) {
+            result = Result.fail(e.getMessage());
+        } finally {
+            return result;
+        }
+    }
 }

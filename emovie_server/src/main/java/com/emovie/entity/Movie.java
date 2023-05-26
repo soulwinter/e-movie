@@ -47,7 +47,7 @@ public class Movie {
 	 * table type:decimal(8)
 	 * table comment:null
 	 */
-	private Double imgbId;
+	private String imgbId;
 
 	/**
 	 * table name:original_language
