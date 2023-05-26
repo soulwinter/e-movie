@@ -26,17 +26,6 @@ public class MovieController {
     @Resource
     IMovieService movieService;
 
-//
-//    //说明是什么方法(可以理解为方法注释)
-//    @ApiOperation("使用密码登录")
-//    //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
-//    @ApiImplicitParams({@ApiImplicitParam(name = "telephone", value = "手机号",required=false),
-//            @ApiImplicitParam(name = "password", value = "密码",required=false)})
-//    @GetMapping("/baseInfo")
-//    public Result UserServiceImpl(){
-//        return null;
-//    }
-
 
     @ApiOperation("获得分页电影信息")
     @ApiImplicitParams({@ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),

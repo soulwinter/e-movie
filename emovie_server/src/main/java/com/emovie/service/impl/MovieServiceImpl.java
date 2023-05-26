@@ -128,7 +128,7 @@ public class MovieServiceImpl implements IMovieService {
                     .lte(param.getVoteAverageTo()));
         }
         //类型过滤
-        if(!param.getGenreList().isEmpty()){
+        if(param.getGenreList()!=null&&!param.getGenreList().isEmpty()){
             boolQuery.must(QueryBuilders.matchQuery("genreList",param.getGenreList().toString()));
         }
         request.source().query(boolQuery);
