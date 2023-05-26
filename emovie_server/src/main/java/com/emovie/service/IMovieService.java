@@ -31,4 +31,5 @@ public interface IMovieService {
     //在首页给该用户推荐100个电影
     Result getUserRecommend(int userId, int pageSize, int offset);
 
+    Result getMovieById(int id);
 }

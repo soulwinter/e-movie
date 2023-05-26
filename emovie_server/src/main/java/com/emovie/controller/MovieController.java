@@ -73,6 +73,10 @@ public class MovieController {
         return movieService.getFilterItem();
     }
 
+    @GetMapping("/{id}")
+    public Result getMovieById(@PathVariable double id){
+        return movieService.getMovieById((int)id);
+    }
 
 
 

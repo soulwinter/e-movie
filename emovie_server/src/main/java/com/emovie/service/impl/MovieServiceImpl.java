@@ -256,4 +256,11 @@ System.out.println(map);
             return result;
         }
     }
+
+    @Override
+    //
+    public Result getMovieById(int id) {
+        Movie movie = movieDao.getBasic(id);
+        return Result.ok(movie);
+    }
 }
