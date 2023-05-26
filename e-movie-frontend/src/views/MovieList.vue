@@ -54,6 +54,7 @@
 <script>
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import HeadComponent from '@/components/HeadComponent.vue';
 
 export default {
@@ -68,10 +69,24 @@ export default {
 
     const searchString = ref('');
     const recommendations = ref([]);
+    const router = useRouter();
 
+//    const fetchMovies = async (page = 1, perPage = 10) => {
+//      try {
+//        const response = await axios.get(`http://localhost:8081/movie/listInfo/${page}/${perPage}`);
+//        if (response.data.success) {
+//          movies.value = [...movies.value, ...response.data.data];
+//        }
+//      } catch (error) {
+//        console.error('Error fetching movies:', error);
+//      }
+//    };
     const fetchMovies = async (page = 1, perPage = 10) => {
       try {
-        const response = await axios.get(`http://localhost:8081/movie/listInfo/${page}/${perPage}`);
+        const response = await axios.post('http://localhost:8081/movie/listInfo', {
+          requestPage: page,
+          movieNumberPerPage: perPage
+        });
         if (response.data.success) {
           movies.value = [...movies.value, ...response.data.data];
         }
@@ -79,6 +94,8 @@ export default {
         console.error('Error fetching movies:', error);
       }
     };
+
+
 
     const searchRecommendation = async () => {
       try {
@@ -100,7 +117,7 @@ export default {
     };
 
     const navigateToMovie = (id) => {
-      this.$router.push({ name: 'MovieDetails', params: { id: id } });
+      router.push({ name: 'MovieDetails', params: { id: id } });
     };
 
     onMounted(() => {
@@ -166,6 +183,7 @@ export default {
 .dropdown-item {
   padding: 10px;
   cursor: pointer;
+  text-align: left;  /* 让文字居左对齐 */
 }
 
 .dropdown-item:hover {
