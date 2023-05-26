@@ -1,5 +1,6 @@
 package com.emovie.controller;
 
+import com.emovie.dto.SearchParam;
 import com.emovie.service.IMovieService;
 import com.emovie.service.IUserService;
 import com.emovie.util.Result;
@@ -25,15 +26,25 @@ public class MovieController {
     @Resource
     IMovieService movieService;
 
+//
+//    //说明是什么方法(可以理解为方法注释)
+//    @ApiOperation("使用密码登录")
+//    //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
+//    @ApiImplicitParams({@ApiImplicitParam(name = "telephone", value = "手机号",required=false),
+//            @ApiImplicitParam(name = "password", value = "密码",required=false)})
+//    @GetMapping("/baseInfo")
+//    public Result UserServiceImpl(){
+//        return null;
+//    }
 
-    //说明是什么方法(可以理解为方法注释)
-    @ApiOperation("使用密码登录")
-    //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
-    @ApiImplicitParams({@ApiImplicitParam(name = "telephone", value = "手机号",required=false),
-            @ApiImplicitParam(name = "password", value = "密码",required=false)})
-    @GetMapping("/baseInfo")
-    public Result UserServiceImpl(){
-        return null;
+
+    @ApiOperation("获得分页电影信息")
+    @ApiImplicitParams({@ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
+            @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数",required = true)})
+    @PostMapping("/listInfo")
+    public Result listInfo(@RequestBody SearchParam param){
+        System.out.println(param);
+        return movieService.listInfo(param);
     }
 
 
@@ -43,21 +54,14 @@ public class MovieController {
     @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "电影id",required=true)})
     @GetMapping("/detailInfo/{id}")
     public Result detailInfo(@PathVariable int id){
-
         return movieService.detailInfo(id);
     }
 
-    //说明是什么方法(可以理解为方法注释)
-    @ApiOperation("获得分页电影信息")
-    //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
-    @ApiImplicitParams({@ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
-            @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数",required = true)})
-    @GetMapping("/listInfo/{requestPage}/{movieNumberPerPage}")
-    public Result listInfo(@PathVariable int requestPage,@PathVariable int movieNumberPerPage){
-
-        return movieService.listInfo(requestPage,movieNumberPerPage);
+    @PostMapping("/searchRecommendation")
+    public Result searchRecommendation(@RequestBody String movieInfoString){
+        System.out.println(movieInfoString);
+        return movieService.searchRecommendation(movieInfoString);
     }
-
 
 
 

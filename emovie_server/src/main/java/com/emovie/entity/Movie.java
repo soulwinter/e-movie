@@ -75,7 +75,7 @@ public class Movie {
 	 * table type:decimal(8)
 	 * table comment:null
 	 */
-	private Double popularity;
+	private Integer popularity;
 
 	/**
 	 * table name:poster_path
@@ -131,7 +131,7 @@ public class Movie {
 	 * table type:decimal(8)
 	 * table comment:null
 	 */
-	private Double voteAverage;
+	private Integer voteAverage;
 
 	/**
 	 * table name:vote_count
