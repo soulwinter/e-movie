@@ -17,4 +17,6 @@ public interface IMovieService {
     Result listInfo(SearchParam param);
 
     Result searchRecommendation(String movieInfoString);
+
+    Result getFilterItem();
 }

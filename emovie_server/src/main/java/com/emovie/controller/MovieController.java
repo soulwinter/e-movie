@@ -57,13 +57,21 @@ public class MovieController {
         return movieService.detailInfo(id);
     }
 
+    /**
+     * 搜索时推荐
+     * @param movieInfoString
+     * @return
+     */
     @PostMapping("/searchRecommendation")
-    public Result searchRecommendation(@RequestParam String movieInfoString){
+    public Result searchRecommendation(@RequestBody String movieInfoString){
         System.out.println(movieInfoString);
         return movieService.searchRecommendation(movieInfoString);
     }
 
-
+    @GetMapping("/filterItem")
+    public Result getFilterItem(){
+        return movieService.getFilterItem();
+    }
 
 
 
