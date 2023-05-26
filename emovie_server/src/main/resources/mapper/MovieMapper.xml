@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定一个对应的Dao/Map接口-->
+<mapper namespace="com.emovie.dao.MovieDao">
+<!--    <resultMap id="RecordMap" type="com.emovie.entity.Movie">-->
+<!--        <id column="id" property="id"></id>-->
+<!--        <result column="url" property="url"></result>-->
+<!--        <result column="caption" property="caption"></result>-->
+<!--    </resultMap>-->
+    <select id="getMovieByIDList" >
+        select *
+        from movie
+        where id in
+        <foreach item="idList" index="index" collection="list" open="(" separator="," close=")">
+            #{idList}
+        </foreach>
+    </select>
+
+    <select id="getUserRecommend" >
+        select *
+        from movie
+        where id in
+            (
+                select recommendId from user_recommend_svd where userid=#{userId} order by predictScore desc limit ${pageSize}
+                         offset ${offset}
+            )
+    </select>
+
+</mapper>
