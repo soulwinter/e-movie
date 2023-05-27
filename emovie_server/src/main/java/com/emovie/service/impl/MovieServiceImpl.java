@@ -56,10 +56,10 @@ public class MovieServiceImpl implements IMovieService {
             movie_info.setGenre(movieDao.getGenre(id));
             movie_info.setId((long) id);
             movie_info.setKeyword(movieDao.getKeyword(id));
-            movie_info.setVote(movieDao.getVote(id));
-
-
-
+//            movie_info.setVote(movieDao.getVote(id));
+            List<Movie> similar = getSimilarMovie(movie_info);
+            System.out.println("similar: "+similar);
+            movie_info.setSimilarMovies(similar);
             result = Result.ok(movie_info);
         } catch (Exception e) {
             result = Result.fail(e.getMessage());
@@ -248,21 +248,20 @@ System.out.println(map);
         try{
             List<Integer> similarIds=movieDao.getSimilarMovie(movie.getId());
             //这里想做与基于内容的结合，与es的结果进行融合得到一个最终的结果，对于不在rating中的电影，直接返回es搜索的结果;
-            if(!similarIds.isEmpty()){
+            if(similarIds.isEmpty()){
                 SearchParam param = new SearchParam();
                 param.setMovieInfoString(movie.getBasic().getTitle());
                 param.setAdult(movie.getBasic().getAdult()==1);
                 param.setGenreList(movie.getGenre());
                 param.setMovieNumberPerPage(25);//推荐25个
                 param.setRequestPage(1);
+                System.out.println("param:"+((List<Movie>)listInfo(param).getData()).size());
                 return (List<Movie>) listInfo(param).getData();
             }
-
             result = movieDao.getMovieByIDList(similarIds);
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
-
             return result;
         }
     }

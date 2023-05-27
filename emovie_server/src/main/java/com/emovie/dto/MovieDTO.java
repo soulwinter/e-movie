@@ -17,6 +17,6 @@ public class MovieDTO{
     private List<String> country;
     private List<Vote> vote;
     private List<String> keyword;
-
-
+//  新增字段为猜你喜欢的电影id列表
+    private List<Movie> similarMovies;
 }
