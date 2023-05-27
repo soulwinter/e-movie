@@ -11,29 +11,47 @@
     </div>
   </div>
 
-  <!-- 筛选项 -->
-  <el-form class="filter-form">
-    <el-form-item label="评分范围">
-      <el-slider v-model="voteRange" :min="filterItems.voteAverage[0]" :max="filterItems.voteAverage[1]" range
-        show-stops />
-    </el-form-item>
-    <el-form-item label="发布年份">
-      <el-slider v-model="releaseRange" :min="Number(filterItems.releaseDate[0])"
-        :max="Number(filterItems.releaseDate[1])" />
-    </el-form-item>
-    <el-form-item label="电影类型">
-      <el-select v-model="selectedGenres" multiple placeholder="选择电影类型">
-        <el-option v-for="genre in filterItems.genre" :key="genre" :label="genre" :value="genre">
-        </el-option>
-      </el-select>
-    </el-form-item>
+  <!-- Filter form -->
+<el-form class="filter-form">
+  <!-- Row for the sliders -->
+  <el-row :gutter="20">
+    <!-- Column for the rating slider -->
+    <el-col :span="12">
+      <el-form-item label="评分范围" style="width: 100%;">
+        <el-slider v-model="voteRange" :min="filterItems.voteAverage[0]" :max="filterItems.voteAverage[1]" range
+          show-stops :disabled="isRatingUnlimited" />
+          <el-checkbox v-model="isRatingUnlimited">评分不限</el-checkbox>
+      </el-form-item>
+    </el-col>
+
+    <!-- Column for the release year slider -->
+    <el-col :span="12">
+      <el-form-item label="发布年份" style="width: 100%;">
+        <el-slider v-model="releaseRange" :min="Number(filterItems.releaseDate[0])"
+          :max="Number(filterItems.releaseDate[1])" :disabled="isDateUnlimited" />
+          <el-checkbox v-model="isDateUnlimited">年份不限</el-checkbox>
+      </el-form-item>
+    </el-col>
+  </el-row>
+
+  <!-- Other form items -->
+  <el-form-item label="电影类型">
+    <el-select v-model="selectedGenres" multiple placeholder="不限类型">
+      <el-option v-for="genre in filterItems.genre" :key="genre" :label="genre" :value="genre">
+      </el-option>
+    </el-select>
+  </el-form-item>
+  
+  <div class="flex-container">
     <el-form-item label="是否限制级">
       <el-checkbox v-model="isAdult">限制级</el-checkbox>
     </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="searchWithFilters">搜索</el-button>
-    </el-form-item>
-  </el-form>
+  </div>
+  <el-form-item>
+    <el-button type="primary" @click="searchWithFilters">搜索</el-button>
+  </el-form-item>
+</el-form>
+
 
   <!-- 电影列表 -->
   <div class="movie-list">
@@ -55,7 +73,7 @@
   </div>
 
   <button class="pagination-btn" @click="loadMoreMovies" v-if="!noMoreMovies">加载更多电影</button>
-  <h1 class="centered-title" v-if="noMoreMovies" >没有更多电影</h1>
+  <h1 class="centered-title" v-if="noMoreMovies">没有更多电影</h1>
 </template>
 
 <script>
@@ -82,6 +100,8 @@ export default {
   },
   setup() {
     const movies = ref([]);
+    const isRatingUnlimited = ref(true);
+    const isDateUnlimited = ref(true);
     const noMoreMovies = ref(false);
 
     let currentPage = 1;
@@ -120,6 +140,14 @@ export default {
       filterOptions.genreList = selectedGenres.value;
       filterOptions.movieInfoString = searchString.value;
       noMoreMovies.value = false;
+      if (isDateUnlimited.value)
+      {
+        filterOptions.releaseDate = null;
+      }
+      if (isRatingUnlimited.value) {
+        filterOptions.voteAverageFrom = null;
+        filterOptions.voteAverageTo = null;
+      }
     };
 
     const fetchMovies = async (page = 1, perPage = 10) => {
@@ -168,11 +196,11 @@ export default {
           movieInfoString: searchString.value,
           requestPage: 1,
           movieNumberPerPage: 10,
-          adult: isAdult.value,
-          releaseDate: releaseRange.value,
-          voteAverageFrom: voteRange.value[0],
-          voteAverageTo: voteRange.value[1],
-          genreList: selectedGenres.value
+          adult: filterOptions.isAdult,
+          releaseDate: filterOptions.releaseDate,
+          voteAverageFrom: filterOptions.voteAverageFrom,
+          voteAverageTo: filterOptions.voteAverageTo,
+          genreList: filterOptions.genreList
         });
 
         if (response.data.success) {
@@ -235,7 +263,9 @@ export default {
       isAdult,
       searchWithFilters,
       applyFilter,
-      noMoreMovies
+      noMoreMovies,
+      isDateUnlimited,
+      isRatingUnlimited
     };
   },
   mounted() {
@@ -246,10 +276,10 @@ export default {
   },
   methods: {
     scrollHandler() {
-           const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-           if (scrollTop + clientHeight >= scrollHeight - 300) {
-             this.loadMoreMovies();
-           }
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 300) {
+        this.loadMoreMovies();
+      }
     },
 
     closeDropdown() {
@@ -394,5 +424,11 @@ export default {
   font-weight: bold;
   font-size: 24px;
   color: gray;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 </style>
