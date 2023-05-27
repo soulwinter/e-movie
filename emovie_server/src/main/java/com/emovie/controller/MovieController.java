@@ -57,11 +57,21 @@ public class MovieController {
         return movieService.searchRecommendation(movieInfoString);
     }
 
+    /**
+     * 筛选的所有选项
+     * @return
+     */
     @GetMapping("/filterItem")
     public Result getFilterItem(){
         return movieService.getFilterItem();
     }
 
+
+    /**
+     * 点击搜索时推荐的电影返回电影简介
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public Result getMovieById(@PathVariable double id){
         return movieService.getMovieById((int)id);

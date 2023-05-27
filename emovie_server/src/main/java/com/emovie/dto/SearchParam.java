@@ -20,5 +20,5 @@ public class SearchParam {
     String releaseDate;
     Integer voteAverageFrom;
     Integer voteAverageTo;
-    ArrayList<String> genreList;
+    List<String> genreList;
 }

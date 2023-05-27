@@ -1,6 +1,5 @@
 package com.emovie.service.impl;
 
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.emovie.dao.GenreDao;
@@ -55,9 +54,10 @@ public class MovieServiceImpl implements IMovieService {
             movie_info.setBasic(movieDao.getBasic(id));
             movie_info.setCountry(movieDao.getCountry(id));
             movie_info.setGenre(movieDao.getGenre(id));
-            movie_info.setId(new Long(id));
+            movie_info.setId((long) id);
             movie_info.setKeyword(movieDao.getKeyword(id));
             movie_info.setVote(movieDao.getVote(id));
+
 
 
             result = Result.ok(movie_info);
@@ -134,6 +134,28 @@ public class MovieServiceImpl implements IMovieService {
         request.source().query(boolQuery);
     }
 
+
+    /**
+     * 获取所有筛选项
+     * @return
+     */
+    @Override
+    public Result getFilterItem() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("adult",new boolean[]{true,false});
+        map.put("releaseDate",new String[]{"1931","2016"});
+        map.put("voteAverage",new int[]{0,10});
+
+        map.put("genre",genreDao.getAllName());
+System.out.println(map);
+        return Result.ok(map);
+    }
+
+    /**
+     * 搜索时推荐
+     * @param movieInfoString
+     * @return
+     */
     @Override
     public Result searchRecommendation(String movieInfoString) {
         Result result=null;
@@ -171,18 +193,6 @@ public class MovieServiceImpl implements IMovieService {
         }
     }
 
-    @Override
-    public Result getFilterItem() {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("adult",new boolean[]{true,false});
-        map.put("releaseDate",new String[]{"1931","2016"});
-        map.put("voteAverage",new int[]{0,10});
-
-        map.put("genre",genreDao.getAllName());
-System.out.println(map);
-        return Result.ok(map);
-    }
-
     private Result handleResponse(SearchResponse response) {
         SearchHits searchHits = response.getHits();
         //4.1获取总条数
@@ -214,10 +224,7 @@ System.out.println(map);
         return Result.ok(result,total);
     }
 
-    /** @Description: 以下代码为陈航所写
-     * @Author: 陈航
-     * @Date: 2023/5/26 14:44
-     */
+
     @Override
     //TODO 根据用户的打分更新对其电影的推荐
     public Result updateRecommend(int userId,int movieId){
@@ -225,18 +232,31 @@ System.out.println(map);
         return result;
     }
 
+
+    /**
+     * 喜欢这部电影的人也喜欢的电影，用于推荐
+     * @param movie 电影
+     * @return 电影集合
+     */
     @Override
-    //喜欢这部电影的人也喜欢的电影，用于推荐
-    public Result getSimilarMovie(int movie_id){
-        Result result=null;
+    public List<Movie> getSimilarMovie(MovieDTO movie){
+        List<Movie> result=null;
         try{
-            List<Integer> similarIds=movieDao.getSimilarMovie(movie_id);
-            //TODO 这里想做与基于内容的结合，与es的结果进行融合得到一个最终的结果，对于不在rating中的电影，直接返回es搜索的结果;
-            List<Integer> resultIds=similarIds;
-            List<Movie> data=movieDao.getMovieByIDList(resultIds);
-            result = Result.ok(data);
+            List<Integer> similarIds=movieDao.getSimilarMovie(movie.getId());
+            //这里想做与基于内容的结合，与es的结果进行融合得到一个最终的结果，对于不在rating中的电影，直接返回es搜索的结果;
+            if(!similarIds.isEmpty()){
+                SearchParam param = new SearchParam();
+                param.setMovieInfoString(movie.getBasic().getTitle());
+                param.setAdult(movie.getBasic().getAdult()==1);
+                param.setGenreList(movie.getGenre());
+                param.setMovieNumberPerPage(25);//推荐25个
+                param.setRequestPage(1);
+                return (List<Movie>) listInfo(param).getData();
+            }
+
+            result = movieDao.getMovieByIDList(similarIds);
         }catch (Exception e) {
-            result = Result.fail(e.getMessage());
+            e.printStackTrace();
         } finally {
 
             return result;
@@ -258,7 +278,7 @@ System.out.println(map);
     }
 
     @Override
-    //
+    //通过id获得当前电影的简介信息
     public Result getMovieById(int id) {
         Movie movie = movieDao.getBasic(id);
         return Result.ok(movie);

@@ -64,7 +64,7 @@ public interface MovieDao {
 
     //查找喜欢这部电影的人也喜欢的电影，用于推荐，最多25个
     @Select("SELECT similarId from movie_similar_svd where movieid=#{movie_id} ORDER BY similardegree DESC; ")
-    public List<Integer> getSimilarMovie(@Param("movie_id") int movie_id);
+    public List<Integer> getSimilarMovie(@Param("movie_id") long movie_id);
 
     //查找推荐给用户的电影,这是分页的，总共有每个用户推100个
     public List<Movie> getUserRecommend(@Param("userId") int userId,@Param("pageSize")int pageSize, @Param("offset")int offset);

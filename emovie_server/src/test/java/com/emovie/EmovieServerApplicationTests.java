@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @SpringBootTest
 class EmovieServerApplicationTests {
 
 
-    @Autowired
-    public IMovieService iMovieService;
+//    @Qualifier("IMovieService")
+    @Resource
+    IMovieService movieService;
+
 
     @Test
     void contextLoads() {
@@ -25,8 +28,8 @@ class EmovieServerApplicationTests {
 
     @Test
     void testRecommendation(){
-        Result result1=iMovieService.getSimilarMovie(110);
-        Result result2=iMovieService.getUserRecommend(1,1,0);
+        Result result1=movieService.detailInfo(110);
+        System.out.println(result1);
     }
 
 }
