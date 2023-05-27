@@ -52,12 +52,41 @@
           </span>
         </div>
       </div>
+      <div>
+
+    <div v-if="movieDetails && movieDetails.similarMovies.length">
+      <h2 style="margin-top: 30px;">这部电影的观众也喜欢</h2>
+      <div class="movie-list">
+          <router-link
+            v-for="(similarMovie, index) in movieDetails.similarMovies"
+            :key="index"
+            :to="{ name: 'MovieDetails', params: { id: similarMovie.id } }"
+            class="movie-link"
+          >
+            <div class="movie-card">
+              <h1 class="movie-title">{{ similarMovie.title }}</h1>
+              <p class="movie-overview">{{ similarMovie.overview }}</p>
+              <div class="info-container">
+                <div class="info-badge" :class="{ 'adult-badge': similarMovie.adult, 'non-adult-badge': !similarMovie.adult }">
+                  {{ similarMovie.adult ? "成人分级" : "非成人分级" }}
+                </div>
+                <div class="info-badge">{{ similarMovie.popularity }} 流行度</div>
+                <div class="info-badge" v-if="similarMovie.budget !== 0">${{ similarMovie.budget }} 预算</div>
+                <div class="info-badge" v-if="similarMovie.revenue !== 0">${{ similarMovie.revenue }} 票房收入</div>
+              </div>
+            </div>
+          </router-link>
+        </div>
+    </div>
+  </div>
     </div>
   </template>
   
   
 
 <script>
+
+
 export default {
   name: "MovieDetails",
   data() {
@@ -65,18 +94,28 @@ export default {
       movieDetails: null,
     };
   },
-  async mounted() {
+  watch: {
+    '$route'() {
+      this.fetchMovieDetails();
+    },
+  },
+  methods: {
+  async fetchMovieDetails() {
     const id = this.$route.params.id;
     const response = await fetch(`http://localhost:8081/movie/detailInfo/${id}`);
     const data = await response.json();
-
     if (data.success) {
       this.movieDetails = data.data;
     }
   },
+},
+  mounted() {
+  this.fetchMovieDetails();
+}
 };
 </script>
 <style scoped>
+
 .movie-details-container {
   text-align: left;
   padding: 0 40px; /* 左右两侧留出40px的间隙 */
@@ -98,4 +137,106 @@ export default {
 .info-tags {
   margin-bottom: 20px;
 }
+
+.similar-movies-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.movie-card {
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  max-width: 400px;
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
+  break-inside: avoid;
+/*  min-width: 200px;*/
+}
+
+.movie-link {
+  text-decoration: none;
+  /* 取消下划线 */
+  color: inherit;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+.movie-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.movie-overview {
+  font-size: 15px;
+  color: #777;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.info-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.info-badge {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #000;
+}
+
+.adult-badge {
+  background-color: #f44336;
+}
+
+.non-adult-badge {
+  background-color: #4caf50;
+}
+
+.pagination-btn {
+  background-color: #4285F4;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.pagination-btn:hover {
+  background-color: #3079ED;
+}
+
+.centered-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  color: gray;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.movie-list {
+  column-count: 3;
+  column-gap: 70px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
 </style>
