@@ -214,6 +214,10 @@ System.out.println(map);
 
             //
         }
+        if (ids.isEmpty())
+        {
+            return Result.ok(null);
+        }
         //通过ids查找数据库数据
         String json = JSONUtil.toJsonStr(ids);
         System.out.println(json.substring(1, json.length() - 1));

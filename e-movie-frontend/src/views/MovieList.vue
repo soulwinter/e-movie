@@ -3,41 +3,47 @@
 
   <!-- 搜索栏 -->
   <div class="search-bar">
-    <input
-      class="search-input"
-      v-model="searchString"
-      @input="searchRecommendation"
-      type="text"
-      placeholder="搜索电影"
-    />
-    <div class="dropdown" v-if="recommendations.length">
-      <div
-        v-for="item in recommendations"
-        :key="item.id"
-        class="dropdown-item"
-        @click="navigateToMovie(item.id)"
-      >
+    <input class="search-input" v-model="searchString" @input="searchRecommendation" type="text" placeholder="搜索电影" />
+    <div class="dropdown" v-if="recommendations.length" v-click-outside="closeDropdown">
+      <div v-for="item in recommendations" :key="item.id" class="dropdown-item" @click="navigateToMovie(item.id)">
         {{ item.title }}
       </div>
     </div>
   </div>
 
+  <!-- 筛选项 -->
+  <el-form class="filter-form">
+    <el-form-item label="评分范围">
+      <el-slider v-model="voteRange" :min="filterItems.voteAverage[0]" :max="filterItems.voteAverage[1]" range
+        show-stops />
+    </el-form-item>
+    <el-form-item label="发布年份">
+      <el-slider v-model="releaseRange" :min="Number(filterItems.releaseDate[0])"
+        :max="Number(filterItems.releaseDate[1])" />
+    </el-form-item>
+    <el-form-item label="电影类型">
+      <el-select v-model="selectedGenres" multiple placeholder="选择电影类型">
+        <el-option v-for="genre in filterItems.genre" :key="genre" :label="genre" :value="genre">
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="是否限制级">
+      <el-checkbox v-model="isAdult">限制级</el-checkbox>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="searchWithFilters">搜索</el-button>
+    </el-form-item>
+  </el-form>
+
   <!-- 电影列表 -->
   <div class="movie-list">
-    <router-link
-      v-for="movie in movies"
-      :key="movie.id"
-      :to="{ name: 'MovieDetails', params: { id: movie.id } }"
-      class="movie-link"
-    >
+    <router-link v-for="movie in movies" :key="movie.id" :to="{ name: 'MovieDetails', params: { id: movie.id } }"
+      class="movie-link">
       <div class="movie-card">
         <h1 class="movie-title">{{ movie.title }}</h1>
         <p class="movie-overview">{{ movie.overview }}</p>
         <div class="info-container">
-          <div
-            class="info-badge"
-            :class="{ 'adult-badge': movie.adult, 'non-adult-badge': !movie.adult }"
-          >
+          <div class="info-badge" :class="{ 'adult-badge': movie.adult, 'non-adult-badge': !movie.adult }">
             {{ movie.adult ? "成人分级" : "非成人分级" }}
           </div>
           <div class="info-badge">{{ movie.popularity }} 流行度</div>
@@ -48,22 +54,36 @@
     </router-link>
   </div>
 
-  <button class="pagination-btn" @click="loadMoreMovies">加载更多电影</button>
+  <button class="pagination-btn" @click="loadMoreMovies" v-if="!noMoreMovies">加载更多电影</button>
+  <h1 class="centered-title" v-if="noMoreMovies" >没有更多电影</h1>
 </template>
 
 <script>
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import HeadComponent from '@/components/HeadComponent.vue';
+import { ElForm, ElFormItem, ElSlider, ElSelect, ElOption, ElCheckbox, ElButton } from 'element-plus';
+
+
+
 
 export default {
   name: 'MovieList',
   components: {
     HeadComponent,
+    ElForm,
+    ElFormItem,
+    ElSlider,
+    ElSelect,
+    ElOption,
+    ElCheckbox,
+    ElButton
   },
   setup() {
     const movies = ref([]);
+    const noMoreMovies = ref(false);
+
     let currentPage = 1;
     const perPage = 10;
 
@@ -71,30 +91,106 @@ export default {
     const recommendations = ref([]);
     const router = useRouter();
 
-//    const fetchMovies = async (page = 1, perPage = 10) => {
-//      try {
-//        const response = await axios.get(`http://localhost:8081/movie/listInfo/${page}/${perPage}`);
-//        if (response.data.success) {
-//          movies.value = [...movies.value, ...response.data.data];
-//        }
-//      } catch (error) {
-//        console.error('Error fetching movies:', error);
-//      }
-//    };
+    // 筛选项
+    const filterItems = ref({
+      voteAverage: [0, 10],
+      releaseDate: ['1931', '2016'],
+      genre: [],
+      adult: [false, true]
+    });
+    const voteRange = ref([0, 10]);
+    const releaseRange = ref(2016);
+    const selectedGenres = ref([]);
+    const isAdult = ref(false);
+
+    const filterOptions = reactive({
+      voteAverageFrom: null,
+      voteAverageTo: null,
+      releaseDate: null,
+      adult: null,
+      genreList: [],
+      movieInfoString: null,
+    });
+
+    const applyFilter = () => {
+      filterOptions.voteAverageFrom = voteRange.value[0];
+      filterOptions.voteAverageTo = voteRange.value[1];
+      filterOptions.releaseDate = releaseRange.value;
+      filterOptions.adult = isAdult.value;
+      filterOptions.genreList = selectedGenres.value;
+      filterOptions.movieInfoString = searchString.value;
+      noMoreMovies.value = false;
+    };
+
     const fetchMovies = async (page = 1, perPage = 10) => {
+      if (!noMoreMovies.value) {
+        try {
+          const response = await axios.post('http://localhost:8081/movie/listInfo', {
+            requestPage: page,
+            movieNumberPerPage: perPage,
+            ...filterOptions,
+          });
+          if (response.data.success) {
+            if (response.data.data !== undefined) {
+              movies.value = [...movies.value, ...response.data.data];
+            } else {
+              // 如果为空，则说明一个电影都没有
+              console.log("no movies");
+              noMoreMovies.value = true;
+            }
+
+            // TODO: 没有更多电影的逻辑暂时没有处理
+          }
+        } catch (error) {
+          console.error('Error fetching movies:', error);
+        }
+      }
+
+    };
+
+    // 筛选
+    const fetchFilterItems = async () => {
       try {
-        const response = await axios.post('http://localhost:8081/movie/listInfo', {
-          requestPage: page,
-          movieNumberPerPage: perPage
-        });
+        const response = await axios.get('http://localhost:8081/movie/filterItem');
         if (response.data.success) {
-          movies.value = [...movies.value, ...response.data.data];
+          filterItems.value = response.data.data;
         }
       } catch (error) {
-        console.error('Error fetching movies:', error);
+        console.error('Error fetching filter items:', error);
       }
     };
 
+    // 搜索
+    const searchWithFilters = async () => {
+      applyFilter();
+      try {
+        const response = await axios.post('http://localhost:8081/movie/listInfo', {
+          movieInfoString: searchString.value,
+          requestPage: 1,
+          movieNumberPerPage: 10,
+          adult: isAdult.value,
+          releaseDate: releaseRange.value,
+          voteAverageFrom: voteRange.value[0],
+          voteAverageTo: voteRange.value[1],
+          genreList: selectedGenres.value
+        });
+
+        if (response.data.success) {
+          if (response.data.data !== undefined) {
+            movies.value = response.data.data;
+          } else {
+            // 如果为空，则说明一个电影都没有
+            console.log("no movies");
+            movies.value = [];
+            noMoreMovies.value = true;
+          }
+
+
+        }
+      } catch (error) {
+        console.error('Error fetching movies with filters:', error);
+      }
+    };
 
 
     const searchRecommendation = async () => {
@@ -113,7 +209,7 @@ export default {
 
     const loadMoreMovies = () => {
       currentPage++;
-      fetchMovies(currentPage, perPage);
+      fetchMovies(currentPage, perPage, filterOptions);
     };
 
     const navigateToMovie = (id) => {
@@ -122,6 +218,7 @@ export default {
 
     onMounted(() => {
       fetchMovies(currentPage, perPage);
+      fetchFilterItems();
     });
 
     return {
@@ -130,7 +227,15 @@ export default {
       searchString,
       searchRecommendation,
       recommendations,
-      navigateToMovie
+      navigateToMovie,
+      filterItems,
+      voteRange,
+      releaseRange,
+      selectedGenres,
+      isAdult,
+      searchWithFilters,
+      applyFilter,
+      noMoreMovies
     };
   },
   mounted() {
@@ -141,22 +246,35 @@ export default {
   },
   methods: {
     scrollHandler() {
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-      if (scrollTop + clientHeight >= scrollHeight - 300) {
-        this.loadMoreMovies();
-      }
+           const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+           if (scrollTop + clientHeight >= scrollHeight - 300) {
+             this.loadMoreMovies();
+           }
+    },
+
+    closeDropdown() {
+      this.recommendations = [];
     },
   }
 };
 </script>
 
 <style scoped>
+.filter-form {
+  max-width: 800px;
+  width: 100%;
+  /*  padding: 20px 30px;*/
+  margin: 0 auto 20px;
+  border-radius: 4px;
+  position: relative;
+}
+
 /* Search Bar */
 .search-bar {
   max-width: 800px;
   width: 100%;
   padding: 20px 30px;
-  margin: 0 auto 100px;  /* 空出300px */
+  margin: 0 auto 100px;
   border-radius: 4px;
   position: relative;
 }
@@ -165,7 +283,8 @@ export default {
   width: 100%;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #ccc;  /* 灰色边框 */
+  border: 1px solid #ccc;
+  /* 灰色边框 */
 }
 
 .dropdown {
@@ -183,87 +302,97 @@ export default {
 .dropdown-item {
   padding: 10px;
   cursor: pointer;
-  text-align: left;  /* 让文字居左对齐 */
+  text-align: left;
+  /* 让文字居左对齐 */
 }
 
 .dropdown-item:hover {
   background-color: #f2f2f2;
 }
 
- .movie-list {
-    column-count: 3;
-    column-gap: 70px;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
+.movie-list {
+  column-count: 3;
+  column-gap: 70px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
 
-  .movie-card {
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-    max-width: 400px;
-    width: 100%;
-    transition: transform 0.3s ease-in-out;
-    break-inside: avoid;
-  }
-  .movie-link {
-    text-decoration: none; /* 取消下划线 */
-    color: inherit;
-  }
+.movie-card {
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  max-width: 400px;
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
+  break-inside: avoid;
+}
 
-  .movie-card:hover {
-    transform: scale(1.05);
-  }
+.movie-link {
+  text-decoration: none;
+  /* 取消下划线 */
+  color: inherit;
+}
 
-  .movie-title {
-    font-size: 30px;
-    font-weight: bold;
-    color: #000;
-    margin-bottom: 10px;
-  }
+.movie-card:hover {
+  transform: scale(1.05);
+}
 
-  .movie-overview {
-    font-size: 15px;
-    color: #777;
-    text-align: left;
-    margin-bottom: 10px;
-  }
+.movie-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 10px;
+}
 
-  .info-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
+.movie-overview {
+  font-size: 15px;
+  color: #777;
+  text-align: left;
+  margin-bottom: 10px;
+}
 
-  .info-badge {
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    padding: 4px 8px;
-    font-size: 12px;
-    color: #000;
-  }
+.info-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
 
-  .adult-badge {
-    background-color: #f44336;
-  }
+.info-badge {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #000;
+}
 
-  .non-adult-badge {
-    background-color: #4caf50;
-  }
+.adult-badge {
+  background-color: #f44336;
+}
 
-  .pagination-btn {
-    background-color: #4285F4;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
+.non-adult-badge {
+  background-color: #4caf50;
+}
 
-  .pagination-btn:hover {
-    background-color: #3079ED;
-  }
+.pagination-btn {
+  background-color: #4285F4;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.pagination-btn:hover {
+  background-color: #3079ED;
+}
+
+.centered-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  color: gray;
+}
 </style>
