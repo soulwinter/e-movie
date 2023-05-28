@@ -14,7 +14,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JWTInterceptors())
                 .addPathPatterns("/**")  // 其他接口token验证
-                .excludePathPatterns("/user/**")  // 所有用户都放行
-                .excludePathPatterns("/movie/**");// 所有电影都放行
+                .excludePathPatterns("/user/**");  // 所有用户都放行
+//                .excludePathPatterns("/movie/**");// 所有电影都放行
     }
 }

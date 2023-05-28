@@ -85,7 +85,8 @@
   
 
 <script>
-
+import axios from 'axios';
+import authMixin from '../authMixin.js'
 
 export default {
   name: "MovieDetails",
@@ -94,20 +95,25 @@ export default {
       movieDetails: null,
     };
   },
+  mixins: [authMixin],
   watch: {
     '$route'() {
       this.fetchMovieDetails();
     },
   },
   methods: {
-  async fetchMovieDetails() {
-    const id = this.$route.params.id;
-    const response = await fetch(`http://localhost:8081/movie/detailInfo/${id}`);
-    const data = await response.json();
-    if (data.success) {
-      this.movieDetails = data.data;
-    }
-  },
+    async fetchMovieDetails() {
+      const id = this.$route.params.id;
+      try {
+        const response = await axios.get(`http://localhost:8081/movie/detailInfo/${id}`);
+        const data = response.data;
+        if (data.success) {
+          this.movieDetails = data.data;
+        }
+      } catch(error) {
+        console.error(error);
+      }
+    },
 },
   mounted() {
   this.fetchMovieDetails();
