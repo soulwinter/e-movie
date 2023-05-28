@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.emovie.util.Constants.ES_INDEX;
 
 
 @Service
@@ -77,7 +78,7 @@ public class MovieServiceImpl implements IMovieService {
 
         try {
             //1.准备request
-            SearchRequest request = new SearchRequest("movie");
+            SearchRequest request = new SearchRequest(ES_INDEX);
 
             //2.准备DSL
             //2.1query
@@ -147,7 +148,6 @@ public class MovieServiceImpl implements IMovieService {
         map.put("voteAverage",new int[]{0,10});
 
         map.put("genre",genreDao.getAllName());
-System.out.println(map);
         return Result.ok(map);
     }
 
@@ -161,7 +161,7 @@ System.out.println(map);
         Result result=null;
         try {
             //1.准备request
-            SearchRequest request = new SearchRequest("movie");
+            SearchRequest request = new SearchRequest(ES_INDEX);
 
             //2.准备DSL
             //2.1.query
@@ -220,7 +220,6 @@ System.out.println(map);
         }
         //通过ids查找数据库数据
         String json = JSONUtil.toJsonStr(ids);
-        System.out.println(json.substring(1, json.length() - 1));
         List<Movie> result = movieDao.getByIds(json.substring(1, json.length() - 1));
 //        List<Movie> result = movieDao.getByIds2(ids);
 
@@ -255,7 +254,6 @@ System.out.println(map);
                 param.setGenreList(movie.getGenre());
                 param.setMovieNumberPerPage(25);//推荐25个
                 param.setRequestPage(1);
-                System.out.println("param:"+((List<Movie>)listInfo(param).getData()).size());
                 return (List<Movie>) listInfo(param).getData();
             }
             result = movieDao.getMovieByIDList(similarIds);
