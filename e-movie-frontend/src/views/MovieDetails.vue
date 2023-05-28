@@ -54,7 +54,7 @@
       </div>
       <div>
 
-    <div v-if="movieDetails && movieDetails.similarMovies.length">
+    <div v-if="movieDetails && movieDetails.similarMovies && movieDetails.similarMovies.length">
       <h2 style="margin-top: 30px;">这部电影的观众也喜欢</h2>
       <div class="movie-list">
           <router-link
