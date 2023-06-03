@@ -72,6 +72,8 @@
 <script>
 import axios from 'axios';
 import HeadComponent from '@/components/HeadComponent.vue';
+import { setToken } from '../token.js'
+import authMixin from '../authMixin.js'
 
 export default {
   components: {
@@ -97,6 +99,7 @@ export default {
       countDown: 0,
     };
   },
+  mixins: [authMixin],
   methods: {
     // 密码登录函数
     async login() {
@@ -109,7 +112,14 @@ export default {
           // 登录成功，在此处处理数据
           alert('登录成功');
           // 保存 token
-          this.$store.dispatch('saveToken', response.data.data.token);
+          this.$store.dispatch('saveToken', response.data.data.token)
+            .then(() => {
+              axios.defaults.headers.common['Authorization'] = response.data.data.token;
+              setToken(response.data.data.token);  // 保存 token 到 cookie
+            });
+
+          // let token = this.$store.getters.getToken;
+          // console.log("Authorization header with token: ", token); // 打印即将设置的 token
           this.$router.push('/home');
         } else {
           // 处理登录失败
@@ -140,7 +150,10 @@ export default {
           // 登录成功，在此处处理数据
           alert('登录成功');
           // 保存 token
-          this.$store.dispatch('saveToken', response.data.data.token);
+          this.$store.dispatch('saveToken', response.data.data.token)
+            .then(() => {
+              axios.defaults.headers.common['Authorization'] = response.data.data.token;
+            });
           this.$router.push('/home');
         } else {
           // 处理登录失败

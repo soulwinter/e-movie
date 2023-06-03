@@ -19,10 +19,19 @@ import java.util.Map;
 public class JWTInterceptors implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        //拦截器取到请求先进行判断，如果是OPTIONS请求，则放行
+        if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            System.out.println("Method:OPTIONS");
+            return true;
+        }
+
         log.info("被拦截了");
+
         Map<String,Object> map = new HashMap<>();
         // 获取请求头中令牌
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
+        System.out.println("token: " + token);
         try {
             // 验证令牌
             DecodedJWT verify = JWTUtils.verify(token);

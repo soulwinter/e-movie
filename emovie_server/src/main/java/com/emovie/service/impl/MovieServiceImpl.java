@@ -252,9 +252,11 @@ public class MovieServiceImpl implements IMovieService {
                 param.setGenreList(movie.getGenre());
                 param.setMovieNumberPerPage(25);//推荐25个
                 param.setRequestPage(1);
-                return (List<Movie>) listInfo(param).getData();
+                result= (List<Movie>) listInfo(param).getData();
+            }else{
+
+                result = movieDao.getMovieByIDList(similarIds);
             }
-            result = movieDao.getMovieByIDList(similarIds);
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
