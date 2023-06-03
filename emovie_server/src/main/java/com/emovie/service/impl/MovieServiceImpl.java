@@ -245,18 +245,32 @@ public class MovieServiceImpl implements IMovieService {
         try{
             List<Integer> similarIds=movieDao.getSimilarMovie(movie.getId());
             //这里想做与基于内容的结合，与es的结果进行融合得到一个最终的结果，对于不在rating中的电影，直接返回es搜索的结果;
+//            if(similarIds.isEmpty()){
+//                SearchParam param = new SearchParam();
+//                param.setMovieInfoString(movie.getBasic().getTitle());
+//                param.setAdult(movie.getBasic().getAdult()==1);
+//                param.setGenreList(movie.getGenre());
+//                param.setMovieNumberPerPage(25);//推荐25个
+//                param.setRequestPage(1);
+//                result= (List<Movie>) listInfo(param).getData();
+//            }else{
+//                result = movieDao.getMovieByIDList(similarIds);
+//            }
+            SearchParam param = new SearchParam();
+            param.setMovieInfoString(movie.getBasic().getTitle());
+            param.setAdult(movie.getBasic().getAdult()==1);
+            param.setGenreList(movie.getGenre());
             if(similarIds.isEmpty()){
-                SearchParam param = new SearchParam();
-                param.setMovieInfoString(movie.getBasic().getTitle());
-                param.setAdult(movie.getBasic().getAdult()==1);
-                param.setGenreList(movie.getGenre());
                 param.setMovieNumberPerPage(25);//推荐25个
-                param.setRequestPage(1);
-                result= (List<Movie>) listInfo(param).getData();
             }else{
-
-                result = movieDao.getMovieByIDList(similarIds);
+                param.setMovieNumberPerPage(10);//推荐10个
+                result.addAll(movieDao.getMovieByIDList(similarIds));
             }
+            param.setRequestPage(1);
+            result.addAll( (List<Movie>) listInfo(param).getData());     //石山代码
+
+
+
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
