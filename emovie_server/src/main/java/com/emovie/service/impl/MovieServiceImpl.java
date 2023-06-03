@@ -99,8 +99,6 @@ public class MovieServiceImpl implements IMovieService {
             return result;
         }
 
-
-
     }
 
     private static void builderBasicQuery(SearchParam param, SearchRequest request) {
