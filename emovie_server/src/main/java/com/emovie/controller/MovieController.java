@@ -77,6 +77,35 @@ public class MovieController {
         return movieService.getMovieById((int)id);
     }
 
+    /**
+     * 增加电影接口
+     *
+     *
+     */
+
+    /**
+     * 电影KeyWord的新增接口
+     */
+    @GetMapping("/addKeyWord")
+    public Result addKeyWord(@RequestParam String KeyWord,@RequestParam int id){ return movieService.addKeyWord(KeyWord,id);}
 
 
+    /**
+     * 电影KeyWord的删除接口
+     */
+    @GetMapping("/deleteKeyWord")
+    public Result deleteKeyWord(@RequestParam String KeyWord,@RequestParam int id){ return movieService.deleteKeyWord(KeyWord,id);}
+
+    /**
+     * 电影Genre的新增接口
+     */
+    @GetMapping("/addGenre")
+    public Result addGenre(@RequestParam String Genre,@RequestParam int id){ return movieService.addGenre(Genre,id);}
+
+
+    /**
+     * 电影Genre的删除接口
+     */
+    @GetMapping("/deleteGenre")
+    public Result deleteGenre(@RequestParam String Genre,@RequestParam int id){ return movieService.deleteGenre(Genre,id);}
 }

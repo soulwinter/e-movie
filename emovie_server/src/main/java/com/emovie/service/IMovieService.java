@@ -32,4 +32,12 @@ public interface IMovieService {
     Result getUserRecommend(int userId, int pageSize, int offset);
 
     Result getMovieById(int id);
+
+    Result deleteKeyWord(String KeyWord,int movieId);
+
+    Result deleteGenre(String Genre,int movieId);
+
+    Result addKeyWord(String KeyWord,int movieId);
+
+    Result addGenre(String Genre,int movieId);
 }

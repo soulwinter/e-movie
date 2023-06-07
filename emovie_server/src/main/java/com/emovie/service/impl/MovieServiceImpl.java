@@ -8,6 +8,8 @@ import com.emovie.dto.MovieDTO;
 import com.emovie.dto.MovieDocument;
 import com.emovie.dto.SearchParam;
 import com.emovie.entity.Movie;
+import com.emovie.entity.MovieGenre;
+import com.emovie.entity.MovieKeyword;
 import com.emovie.service.IMovieService;
 import com.emovie.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -298,4 +300,72 @@ public class MovieServiceImpl implements IMovieService {
         Movie movie = movieDao.getBasic(id);
         return Result.ok(movie);
     }
+
+
+    @Override
+    /**
+     *删除某一影片的某一关键字
+     */
+    public Result deleteKeyWord(String KeyWord,int movieId){
+        List<MovieKeyword> keywordList=movieDao.getKeywordByName(movieId,KeyWord);
+        if(keywordList.size()!=0){
+            movieDao.deleteKeywordByName(movieId,KeyWord);
+            return Result.ok();
+        }else{
+            return Result.fail("原本就没有该tag！");
+        }
+    }
+
+    @Override
+    public Result deleteGenre(String Genre, int movieId) {
+        List<MovieGenre> GenreList=movieDao.getGenreByName(movieId,Genre);
+        if(GenreList.size()!=0){
+            movieDao.deleteGenreByName(movieId,Genre);
+            return Result.ok();
+        }else{
+            return Result.fail("原本就没有该种类！");
+        }
+    }
+
+    @Override
+    public Result addKeyWord(String KeyWord, int movieId) {
+        int hasKeyWord = movieDao.hasKeyWord(KeyWord);
+        if(hasKeyWord==1){ //有该种类
+            List<MovieKeyword> KeyWordList=movieDao.getKeywordByName(movieId,KeyWord);
+            System.out.println(KeyWordList.size());
+            if(KeyWordList.size()==0){
+                System.out.println("添加上了！");
+                movieDao.addKeyWord(movieId,KeyWord);
+                return Result.ok();
+            }else{
+                System.out.println("已经有该tag了这个影片");
+                return Result.fail("该tag已存在..");
+            }
+        }else{
+            System.out.println("原本没有该tag，已新建");
+            movieDao.addNewKeyWord(KeyWord);
+            movieDao.addKeyWord(movieId,KeyWord);
+            return Result.ok();
+        }
+    }
+
+    @Override
+    public Result addGenre(String Genre, int movieId) {
+        int hasGenre = movieDao.hasGenre(Genre);
+        if(hasGenre==1){ //有该种类
+            List<MovieGenre> GenreList=movieDao.getGenreByName(movieId,Genre);
+            System.out.println(GenreList.size());
+            if(GenreList.size()==0){
+                movieDao.addGenre(movieId,Genre);
+                return Result.ok();
+            }else{
+                return Result.fail("该种类已存在..");
+            }
+        }else{
+            movieDao.addNewGenre(Genre);
+            movieDao.addGenre(movieId,Genre);
+            return Result.ok();
+        }
+    }
+
 }

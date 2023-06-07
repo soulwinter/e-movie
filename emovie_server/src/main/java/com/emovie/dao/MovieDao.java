@@ -1,6 +1,8 @@
 package com.emovie.dao;
 
 import com.emovie.entity.Movie;
+import com.emovie.entity.MovieGenre;
+import com.emovie.entity.MovieKeyword;
 import com.emovie.entity.Vote;
 import org.apache.ibatis.annotations.*;
 
@@ -71,4 +73,56 @@ public interface MovieDao {
 
     //根据id获得电影
     public List<Movie> getMovieByIDList(@Param("idList") List<Integer> idList);
+
+    /**
+     *@Author: Yu
+     *@Date: 2023/5/31 17:31
+     */
+    /**
+     * 关于Keyword的
+     * */
+    //传入Keyword的字符串，去匹配数据库中该电影是否有该Keyword tag 用于处理是否能够新增或者删除请求的Keyword
+    @Select("SELECT * FROM movie_keyword where id=#{movie_id} AND Key_id=(SELECT id FROM keyword WHERE name=#{KeyWord});")
+    public List<MovieKeyword> getKeywordByName(@Param("movie_id") int movie_id, @Param("KeyWord") String KeyWord);
+
+    //删除电影的该Keyword
+    @Delete("Delete FROM movie_keyword where id=#{movie_id} AND Key_id=(SELECT id FROM keyword WHERE name=#{KeyWord});")
+    public int deleteKeywordByName(@Param("movie_id") int movie_id, @Param("KeyWord") String KeyWord);
+
+    //插入一个种类Genre-movie键值对
+    @Insert("insert into movie_keyword VALUES (#{movie_id},(SELECT id from keyword where name=#{KeyWord}),null)")
+    public int addKeyWord(@Param("movie_id")int movieId,  @Param("KeyWord")String KeyWord);
+
+    //查找是否有Genre
+    @Select("SELECT COUNT(*) from keyword where name=#{KeyWord}")
+    public int hasKeyWord(@Param("KeyWord") String KeyWord);
+
+    //插入一个新的种类
+    @Insert("insert into keyword VALUES (null,#{KeyWord},null)")
+    public int addNewKeyWord(@Param("KeyWord")String KeyWord);
+
+
+
+    /**
+     * 关于Genre的
+     * */
+    //传入Genre的字符串，去匹配数据库中该电影是否有该Genre用于处理是否能够新增或者删除请求的Genre
+    @Select("SELECT * FROM movie_genre where id=#{movie_id} AND Gen_id=(SELECT id FROM genre WHERE name=#{Genre});")
+    public List<MovieGenre> getGenreByName(@Param("movie_id") int movie_id, @Param("Genre") String Genre);
+
+    //删除电影的该Genre
+    @Delete("Delete FROM movie_genre where id=#{movie_id} AND Gen_id=(SELECT id FROM keyword WHERE name=#{Genre});")
+    public int deleteGenreByName(@Param("movie_id") int movie_id, @Param("Genre") String Genre);
+
+    //插入一个种类Genre-movie键值对
+    @Insert("insert into movie_genre VALUES (#{movie_id},(SELECT id from genre where name=#{Genre}),null)")
+    public int addGenre(@Param("movie_id")int movieId,  @Param("Genre")String genre);
+
+    //查找是否有Genre
+    @Select("SELECT COUNT(*) from genre where name=#{Genre}")
+    public int hasGenre(@Param("Genre") String Genre);
+
+    //插入一个新的种类
+    @Insert("insert into genre VALUES (null,#{Genre},null)")
+    public int addNewGenre(@Param("Genre")String genre);
 }
