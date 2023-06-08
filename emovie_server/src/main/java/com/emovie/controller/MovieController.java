@@ -67,6 +67,12 @@ public class MovieController {
         return movieService.getFilterItem();
     }
 
+    /**
+     *
+     * @return
+     */
+    @PostMapping("/newMovie")
+    public Result newMovie(@RequestBody Movie basic){return movieService.newMovie(basic);}
 
     /**
      * 点击搜索时推荐的电影返回电影简介
@@ -101,12 +107,18 @@ public class MovieController {
 
     /**
      * 电影KeyWord的删除接口
+     * @param KeyWord
+     * @param id
+     * @return
      */
     @GetMapping("/deleteKeyWord")
     public Result deleteKeyWord(@RequestParam String KeyWord,@RequestParam int id){ return movieService.deleteKeyWord(KeyWord,id);}
 
     /**
      * 电影Genre的新增接口
+     * @param Genre
+     * @param id
+     * @return
      */
     @GetMapping("/addGenre")
     public Result addGenre(@RequestParam String Genre,@RequestParam int id){ return movieService.addGenre(Genre,id);}
@@ -114,6 +126,9 @@ public class MovieController {
 
     /**
      * 电影Genre的删除接口
+     * @param Genre
+     * @param id
+     * @return
      */
     @GetMapping("/deleteGenre")
     public Result deleteGenre(@RequestParam String Genre,@RequestParam int id){ return movieService.deleteGenre(Genre,id);}

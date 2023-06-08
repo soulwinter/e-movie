@@ -82,6 +82,7 @@
     </update>
 
 
+
     <select id="getMovieByIDList" resultType="com.emovie.entity.Movie">
         select *
         from movie

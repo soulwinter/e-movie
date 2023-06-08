@@ -42,4 +42,6 @@ public interface IMovieService {
     Result addGenre(String Genre,int movieId);
 
     Result updateInfo(Movie info);
+
+    Result newMovie(Movie info);
 }
