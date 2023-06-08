@@ -3,6 +3,8 @@ import WelcomeLogin from "@/views/WelcomeLogin"
 // import Home from "@/views/HomePage"
 import MovieList from '@/views/MovieList.vue';
 import MovieDetails from "@/views/MovieDetails.vue";
+import AdminMovieList from "@/views/AdminMovieList.vue";
+import AdminMovieDetails from "@/views/AdminMovieDetails.vue";
 
 const routes = [
   // Add your routes here
@@ -21,6 +23,16 @@ const routes = [
     name: "MovieDetails",
     component: MovieDetails,
   },
+  {
+    path: "/admin/home",
+    name: "AdminMovieList",
+    component: AdminMovieList,
+  },
+  {
+    path: "/admin/movie/:id",
+    name: "AdminMovieDetails",
+    component: AdminMovieDetails,
+  }
 ];
 
 const router = createRouter({
