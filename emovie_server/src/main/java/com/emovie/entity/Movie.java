@@ -3,6 +3,7 @@ package com.emovie.entity;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.ibatis.annotations.MapKey;
 
 /**
  * @author  huangzelin 

@@ -1,6 +1,7 @@
 package com.emovie.controller;
 
 import com.emovie.dto.SearchParam;
+import com.emovie.entity.Movie;
 import com.emovie.service.IMovieService;
 import com.emovie.service.IUserService;
 import com.emovie.util.Result;
@@ -78,13 +79,21 @@ public class MovieController {
     }
 
     /**
-     * 增加电影接口
-     *
-     *
+     * 更新电影Basic信息的接口
+     * @param basic
+     * @return
      */
+    @PostMapping("/updateInfo")
+    public Result updateInfo(@RequestBody Movie basic){
+        return movieService.updateInfo(basic);
+    }
+
 
     /**
      * 电影KeyWord的新增接口
+     * @param KeyWord
+     * @param id
+     * @return
      */
     @GetMapping("/addKeyWord")
     public Result addKeyWord(@RequestParam String KeyWord,@RequestParam int id){ return movieService.addKeyWord(KeyWord,id);}

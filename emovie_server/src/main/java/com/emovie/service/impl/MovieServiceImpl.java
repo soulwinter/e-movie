@@ -368,4 +368,11 @@ public class MovieServiceImpl implements IMovieService {
         }
     }
 
+    @Override
+    public Result updateInfo(Movie info) {
+        System.out.println(info.getAdult());
+        movieDao.updateInfo(info);
+        return Result.ok();
+    }
+
 }

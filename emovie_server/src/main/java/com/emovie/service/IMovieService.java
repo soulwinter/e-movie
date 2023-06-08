@@ -40,4 +40,6 @@ public interface IMovieService {
     Result addKeyWord(String KeyWord,int movieId);
 
     Result addGenre(String Genre,int movieId);
+
+    Result updateInfo(Movie info);
 }

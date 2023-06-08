@@ -25,8 +25,63 @@
         <result column="voteCount" property="voteCount"></result>
         <result column="allCrew" property="allCrew"></result>
         <result column="deleted" property="deleted"></result>
-
     </resultMap>
+
+    <update id="updateInfo" parameterType="com.emovie.entity.Movie">
+    update movie
+    <set>
+        <if test="adult != null">
+            `adult` = #{adult},
+        </if>
+        <if test="budget != null">
+            budget = #{budget},
+        </if>
+        <if test="homepage != null">
+            homepage = #{homepage},
+        </if>
+        <if test="originalLanguage != null">
+            original_language = #{originalLanguage},
+        </if>
+        <if test="originalTitle != null">
+            original_title = #{originalTitle},
+        </if>
+        <if test="overview != null">
+            overview = #{overview},
+        </if>
+        <if test="popularity != null">
+            popularity = #{popularity},
+        </if>
+        <if test="posterPath != null">
+            poster_path = #{posterPath},
+        </if>
+        <if test="releaseDate != null">
+            release_date = #{releaseDate},
+        </if>
+        <if test="revenue != null">
+            revenue = #{revenue},
+        </if>
+        <if test="runtime != null">
+            runtime = #{runtime},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        <if test="title != null">
+            title = #{title},
+        </if>
+        <if test="voteAverage != null">
+            vote_average = #{voteAverage},
+        </if>
+        <if test="voteCount != null">
+            vote_count = #{voteCount},
+        </if>
+    </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+
     <select id="getMovieByIDList" resultType="com.emovie.entity.Movie">
         select *
         from movie
@@ -45,5 +100,7 @@
                          offset ${offset})a
             )
     </select>
+
+
 
 </mapper>

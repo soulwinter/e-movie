@@ -125,4 +125,6 @@ public interface MovieDao {
     //插入一个新的种类
     @Insert("insert into genre VALUES (null,#{Genre},null)")
     public int addNewGenre(@Param("Genre")String genre);
+
+    int updateInfo(Movie movie);
 }
