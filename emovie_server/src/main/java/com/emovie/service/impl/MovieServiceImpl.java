@@ -243,7 +243,7 @@ public class MovieServiceImpl implements IMovieService {
      */
     @Override
     public List<Movie> getSimilarMovie(MovieDTO movie){
-        List<Movie> result=null;
+        List<Movie> result=new ArrayList<>();
         try{
             List<Integer> similarIds=movieDao.getSimilarMovie(movie.getId());
             //这里想做与基于内容的结合，与es的结果进行融合得到一个最终的结果，对于不在rating中的电影，直接返回es搜索的结果;
