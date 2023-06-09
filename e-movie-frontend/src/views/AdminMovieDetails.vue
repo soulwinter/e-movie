@@ -83,7 +83,8 @@
 <script>
 import axios from 'axios';
 import authMixin from '../authMixin.js'
-
+import { getUserType } from '../user.js'
+import { useRouter } from 'vue-router';
 
 export default {
   name: "MovieDetails",
@@ -241,7 +242,11 @@ export default {
     },
   },
   mounted() {
-   
+    if (getUserType() != 1) {
+      alert("您不是管理员，无法进入该页面。请检查您的权限。");
+      const router = useRouter();
+      router.push('/');
+    }
     this.fetchMovieDetails();
   }
 };

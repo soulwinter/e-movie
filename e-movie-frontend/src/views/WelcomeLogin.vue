@@ -81,8 +81,10 @@ import axios from 'axios';
 import HeadComponent from '@/components/HeadComponent.vue';
 import { setToken } from '../token.js'
 import authMixin from '../authMixin.js'
+import {setUserType, getUserType, deleteUserType} from '../user.js'
 
 export default {
+
   components: {
     HeadComponent,
   },
@@ -107,6 +109,9 @@ export default {
     };
   },
   mixins: [authMixin],
+  mounted() {
+   deleteUserType();
+  },
   methods: {
     // 密码登录函数
     async login() {
@@ -128,10 +133,13 @@ export default {
           // let token = this.$store.getters.getToken;
           // console.log("Authorization header with token: ", token); // 打印即将设置的 token
           if (response.data.data.type === 1) {
+            setUserType(1);
+            console.log(getUserType());
             this.$router.push('/admin/home');
           } else {
+            setUserType(0);
             this.$router.push('/');
-          }
+          } 
 
         } else {
           // 处理登录失败
@@ -167,8 +175,10 @@ export default {
               axios.defaults.headers.common['Authorization'] = response.data.data.token;
             });
           if (response.data.data.type === 1) {
+            setUserType(1);
             this.$router.push('/admin/home');
           } else {
+            setUserType(0);
             this.$router.push('/');
           }
         } else {
