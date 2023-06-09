@@ -102,6 +102,8 @@ export default {
         const data = response.data;
         if (data.success) {
           this.movieDetails = data.data;
+          // 屏蔽相同项
+          this.movieDetails.similarMovies = this.movieDetails.similarMovies.filter(movie => movie.id !== this.movieDetails.id);
         }
       } catch (error) {
         console.error(error);
