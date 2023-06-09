@@ -32,7 +32,7 @@
                     >
                         {{ genre }}<span class="close-icon">×</span>
                     </span>
-                    <button @click="addGenre()">添加类型</button>
+                    <button @click="addGenre()" class="pagination-btn">添加类型</button>
                 </div>
                 <div>
                     <h3>国家</h3>
@@ -54,18 +54,10 @@
                     >
                         {{ keyword }}<span class="close-icon">×</span>
                     </span>
-                    <button @click="addKeyword()">添加标签</button>
+                    <button @click="addKeyword()" class="pagination-btn">添加标签</button>
                 </div>
-                <button @click="isEditable = true">编辑</button>
             </div>
-            <div v-if="isEditable">
-                <input type="text" v-model="movieDetails.basic.title">
-                <textarea v-model="movieDetails.basic.overview"></textarea>
-                <div>
-                    是否成人：<input type="checkbox" v-model="movieDetails.basic.adult">
-                </div>
-                <button @click="saveDetails()">保存</button>
-            </div>
+           
         </div>
     </div>
 </template>
@@ -78,7 +70,6 @@ export default {
   data() {
     return {
       movieDetails: null,
-      isEditable: false,
     };
   },
   mixins: [authMixin],
@@ -100,21 +91,7 @@ export default {
         console.error(error);
       }
     },
-    async saveDetails() {
-      try {
-        const response = await axios.get(`http://localhost:8081/movie/updateInfo`, {
-          params: {
-            ...this.movieDetails.basic,
-            id: this.$route.params.id,
-          }
-        });
-        if (response.data.success) {
-          this.isEditable = false;
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
+
     async deleteGenre(index) {
       try {
         const response = await axios.get(`http://localhost:8081/movie/deleteGenre`, {
@@ -210,25 +187,18 @@ export default {
   margin-bottom: 20px;
 }
 
-.similar-movies-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: space-between;
-    margin-top: 20px;
+.pagination-btn {
+  background-color: #4285F4;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  /* padding: 10px 20px; */
+  font-size: 13px;
+  cursor: pointer;
+  /* margin-top: 20px; */
 }
 
-.movie-card {
-  background-color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
-  max-width: 400px;
-  width: 100%;
-  transition: transform 0.3s ease-in-out;
-  break-inside: avoid;
-/*  min-width: 200px;*/
-}
+
 
 .movie-link {
   text-decoration: none;
@@ -281,10 +251,11 @@ export default {
   color: #fff;
   border: none;
   border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 5px 10px;
+  font-size: 10px;
   cursor: pointer;
   margin-top: 20px;
+  padding-left: 10px;
 }
 
 .pagination-btn:hover {
@@ -324,6 +295,71 @@ export default {
   display: inline-block;
   padding-left: 8px;
 }
+
+.input {
+        flex-grow: 1;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid #272343;
+        font-size: 20px;
+        outline: none;
+        margin: 10px 0;
+        display: block;
+    }
+    
+    .flex-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .modern-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .modern-switch input { 
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .modern-switch input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    .modern-switch input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    .modern-switch input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
 
 @keyframes shake {
   10%, 90% {
