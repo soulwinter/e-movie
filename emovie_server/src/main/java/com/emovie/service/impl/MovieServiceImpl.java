@@ -87,7 +87,9 @@ public class MovieServiceImpl implements IMovieService {
             // TODO
             Integer page = param.getRequestPage();//第几页
             Integer number = param.getMovieNumberPerPage();//每页的条数
-            return null;
+            List<Movie>data=movieDao.getTopMovie(number,(page-1)*number);
+            Long total=Long.valueOf(data.size());
+            return Result.ok(data,total);
         }
 
         try {

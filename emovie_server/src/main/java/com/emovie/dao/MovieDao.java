@@ -74,6 +74,8 @@ public interface MovieDao {
     //根据id获得电影
     public List<Movie> getMovieByIDList(@Param("idList") List<Integer> idList);
 
+    //获得最热门的电影
+    public List<Movie> getTopMovie(@Param("pageSize") Integer pageSize,@Param("offset") Integer offset);
     /**
      *@Author: Yu
      *@Date: 2023/5/31 17:31
