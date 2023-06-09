@@ -78,6 +78,13 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public Result listInfo(SearchParam param) {
         Result result=null;
+        // TODO 如果参数里什么都没 就走数据库查询热门电影表
+        if(param.isNull()){
+            System.out.println("TODO 如果参数里什么都没 就走数据库查询热门电影表");
+            // TODO
+
+            return null;
+        }
 
         try {
             //1.准备request

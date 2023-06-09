@@ -30,7 +30,8 @@ public class MovieController {
 
 
     @ApiOperation("获得分页电影信息")
-    @ApiImplicitParams({@ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
             @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数",required = true)})
     @PostMapping("/listInfo")
     public Result listInfo(@RequestBody SearchParam param){
