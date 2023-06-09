@@ -15,6 +15,7 @@ import com.emovie.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -228,14 +229,6 @@ public class MovieServiceImpl implements IMovieService {
     }
 
 
-    @Override
-    //TODO 根据用户的打分更新对其电影的推荐
-    public Result updateRecommend(int userId,int movieId){
-        Result result=null;
-        return result;
-    }
-
-
     /**
      * 喜欢这部电影的人也喜欢的电影，用于推荐
      * @param movie 电影
@@ -317,12 +310,18 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
-    public Result deleteGenre(String Genre, int movieId) {
+    public Result deleteGenre(String Genre, int movieId) throws IOException {
         List<MovieGenre> GenreList=movieDao.getGenreByName(movieId,Genre);
         if(GenreList.size()!=0){
             int res=movieDao.deleteGenreByName(movieId,Genre);
-            if(res==0){return Result.fail("该电影没有该种类，请检查");}
-            else{return Result.ok();}
+            if(res==0){
+                return Result.fail("该电影没有该种类，请检查");
+            }
+            else{
+                //修改es中的数据
+                UpdateEsGenre(movieId);
+                return Result.ok();
+            }
         }else{
             return Result.fail("原本就没有该种类！");
         }
@@ -351,13 +350,15 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
-    public Result addGenre(String Genre, int movieId) {
+    public Result addGenre(String Genre, int movieId) throws IOException {
         int hasGenre = movieDao.hasGenre(Genre);
         if(hasGenre==1){ //有该种类
             List<MovieGenre> GenreList=movieDao.getGenreByName(movieId,Genre);
             System.out.println(GenreList.size());
             if(GenreList.size()==0){
                 movieDao.addGenre(movieId,Genre);
+                //修改es中的数据
+                UpdateEsGenre(movieId);
                 return Result.ok();
             }else{
                 return Result.fail("该种类已存在..");
@@ -365,6 +366,8 @@ public class MovieServiceImpl implements IMovieService {
         }else{
             movieDao.addNewGenre(Genre);
             movieDao.addGenre(movieId,Genre);
+            //修改es中的数据
+            UpdateEsGenre(movieId);
             return Result.ok();
         }
     }
@@ -378,6 +381,22 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public Result newMovie(Movie info) {
         movieDao.newMovie(info);
-        return Result.ok(); }
+        return Result.ok();
+    }
+
+    /**
+     * 更新es中的Genre
+     * @param movieId
+     * @throws IOException
+     */
+    public void UpdateEsGenre(int movieId) throws IOException {
+        List<String> list = movieDao.getGenre(movieId);
+        System.out.println(list);
+        UpdateRequest request = new UpdateRequest("movie", String.valueOf((double)movieId));
+
+        request.doc("genreList",list);
+
+        restHighLevelClient.update(request,RequestOptions.DEFAULT);
+    }
 
 }

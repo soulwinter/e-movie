@@ -6,6 +6,7 @@ import com.emovie.entity.Movie;
 import com.emovie.util.Result;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -23,10 +24,6 @@ public interface IMovieService {
 
     Result getFilterItem();
 
-
-    //TODO 根据用户的打分更新对其电影的推荐
-    Result updateRecommend(int userId,int movieId);
-
     public List<Movie> getSimilarMovie(MovieDTO movie);
     //在首页给该用户推荐100个电影
     Result getUserRecommend(int userId, int pageSize, int offset);
@@ -35,11 +32,11 @@ public interface IMovieService {
 
     Result deleteKeyWord(String KeyWord,int movieId);
 
-    Result deleteGenre(String Genre,int movieId);
+    Result deleteGenre(String Genre,int movieId) throws IOException;
 
     Result addKeyWord(String KeyWord,int movieId);
 
-    Result addGenre(String Genre,int movieId);
+    Result addGenre(String Genre,int movieId) throws IOException;
 
     Result updateInfo(Movie info);
 

@@ -68,7 +68,6 @@ public class JWTInterceptors implements HandlerInterceptor {
                 UserDTO userDTO = new UserDTO(Long.valueOf(id), username, telephone, Integer.valueOf(type));
 log.debug(userDTO.toString());
                 redisTemplate.opsForValue().set(key,JSONUtil.toJsonStr(userDTO),LOGIN_USER_TTL,TimeUnit.DAYS);
-
             }
 
 

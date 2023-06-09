@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -72,7 +73,7 @@ class ElasticTests {
     @Test
     public void createUserIndex() throws IOException {
 
-        CreateIndexRequest request = new CreateIndexRequest("movie");
+        CreateIndexRequest request = new CreateIndexRequest("movie2");
         request.source(MAPPING, XContentType.JSON);
         CreateIndexResponse createIndexResponse = client.indices().create(request, RequestOptions.DEFAULT);
         System.out.println(createIndexResponse.isAcknowledged());
@@ -128,17 +129,17 @@ class ElasticTests {
 
     }
 
-    @BeforeEach
-    void setUp(){
-        this.client=new RestHighLevelClient(RestClient.builder(
-                HttpHost.create("http://8.130.92.141:9200")
-        ));
-    }
-
-    @AfterEach
-    void close() throws IOException {
-        this.client.close();
-    }
+//    @BeforeEach
+//    void setUp(){
+//        this.client=new RestHighLevelClient(RestClient.builder(
+//                HttpHost.create("http://8.130.92.141:9200")
+//        ));
+//    }
+//
+//    @AfterEach
+//    void close() throws IOException {
+//        this.client.close();
+//    }
 
 
     @Test
@@ -233,7 +234,22 @@ System.out.println(movie);
     }
 
 
+    @Test
+    void testUpdateGenre() throws IOException {
 
+
+        Movie movie = movieDao.getBasic(3);
+
+        UpdateRequest request = new UpdateRequest("movie", movie.getId().toString());
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Drama");
+        list.add("Comedy");
+
+        request.doc("genreList",list);
+
+
+        client.update(request,RequestOptions.DEFAULT);
+    }
 
 
 }

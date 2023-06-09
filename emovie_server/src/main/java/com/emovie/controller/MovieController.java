@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 
 @Slf4j
@@ -121,7 +122,7 @@ public class MovieController {
      * @return
      */
     @GetMapping("/addGenre")
-    public Result addGenre(@RequestParam String Genre,@RequestParam int id){ return movieService.addGenre(Genre,id);}
+    public Result addGenre(@RequestParam String Genre,@RequestParam int id) throws IOException { return movieService.addGenre(Genre,id);}
 
 
     /**
@@ -131,5 +132,5 @@ public class MovieController {
      * @return
      */
     @GetMapping("/deleteGenre")
-    public Result deleteGenre(@RequestParam String Genre,@RequestParam int id){ return movieService.deleteGenre(Genre,id);}
+    public Result deleteGenre(@RequestParam String Genre,@RequestParam int id) throws IOException { return movieService.deleteGenre(Genre,id);}
 }

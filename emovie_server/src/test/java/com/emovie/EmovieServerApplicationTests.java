@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 @SpringBootTest
@@ -30,6 +31,11 @@ class EmovieServerApplicationTests {
     void testRecommendation(){
         Result result1=movieService.detailInfo(110);
         System.out.println(result1);
+    }
+
+    @Test
+    void testUpdateGenre() throws IOException {
+        movieService.addGenre("测试2",3);
     }
 
 }
