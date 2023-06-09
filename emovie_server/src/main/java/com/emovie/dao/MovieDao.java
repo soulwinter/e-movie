@@ -111,7 +111,7 @@ public interface MovieDao {
     public List<MovieGenre> getGenreByName(@Param("movie_id") int movie_id, @Param("Genre") String Genre);
 
     //删除电影的该Genre
-    @Delete("Delete FROM movie_genre where id=#{movie_id} AND Gen_id=(SELECT id FROM keyword WHERE name=#{Genre});")
+    @Delete("Delete FROM movie_genre where id=#{movie_id} AND Gen_id=(SELECT id FROM genre WHERE name=#{Genre});")
     public int deleteGenreByName(@Param("movie_id") int movie_id, @Param("Genre") String Genre);
 
     //插入一个种类Genre-movie键值对

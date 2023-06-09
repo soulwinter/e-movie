@@ -320,8 +320,9 @@ public class MovieServiceImpl implements IMovieService {
     public Result deleteGenre(String Genre, int movieId) {
         List<MovieGenre> GenreList=movieDao.getGenreByName(movieId,Genre);
         if(GenreList.size()!=0){
-            movieDao.deleteGenreByName(movieId,Genre);
-            return Result.ok();
+            int res=movieDao.deleteGenreByName(movieId,Genre);
+            if(res==0){return Result.fail("该电影没有该种类，请检查");}
+            else{return Result.ok();}
         }else{
             return Result.fail("原本就没有该种类！");
         }
