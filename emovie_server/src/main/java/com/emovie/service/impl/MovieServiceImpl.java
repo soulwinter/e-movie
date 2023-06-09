@@ -381,7 +381,8 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public Result newMovie(Movie info) {
         movieDao.newMovie(info);
-        return Result.ok();
+        System.out.println("新增电影，返回主键:"+ info.getId());
+        return Result.ok(info.getId());
     }
 
     /**

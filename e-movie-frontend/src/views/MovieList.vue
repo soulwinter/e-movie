@@ -12,45 +12,45 @@
   </div>
 
   <!-- Filter form -->
-<el-form class="filter-form">
-  <!-- Row for the sliders -->
-  <el-row :gutter="20">
-    <!-- Column for the rating slider -->
-    <el-col :span="12">
-      <el-form-item label="评分范围" style="width: 100%;">
-        <el-slider v-model="voteRange" :min="filterItems.voteAverage[0]" :max="filterItems.voteAverage[1]" range
-          show-stops :disabled="isRatingUnlimited" />
+  <el-form class="filter-form">
+    <!-- Row for the sliders -->
+    <el-row :gutter="20">
+      <!-- Column for the rating slider -->
+      <el-col :span="12">
+        <el-form-item label="评分范围" style="width: 100%;">
+          <el-slider v-model="voteRange" :min="filterItems.voteAverage[0]" :max="filterItems.voteAverage[1]" range
+            show-stops :disabled="isRatingUnlimited" />
           <el-checkbox v-model="isRatingUnlimited">评分不限</el-checkbox>
-      </el-form-item>
-    </el-col>
+        </el-form-item>
+      </el-col>
 
-    <!-- Column for the release year slider -->
-    <el-col :span="12">
-      <el-form-item label="发布年份" style="width: 100%;">
-        <el-slider v-model="releaseRange" :min="Number(filterItems.releaseDate[0])"
-          :max="Number(filterItems.releaseDate[1])" :disabled="isDateUnlimited" />
+      <!-- Column for the release year slider -->
+      <el-col :span="12">
+        <el-form-item label="发布年份" style="width: 100%;">
+          <el-slider v-model="releaseRange" :min="Number(filterItems.releaseDate[0])"
+            :max="Number(filterItems.releaseDate[1])" :disabled="isDateUnlimited" />
           <el-checkbox v-model="isDateUnlimited">年份不限</el-checkbox>
-      </el-form-item>
-    </el-col>
-  </el-row>
+        </el-form-item>
+      </el-col>
+    </el-row>
 
-  <!-- Other form items -->
-  <el-form-item label="电影类型">
-    <el-select v-model="selectedGenres" multiple placeholder="不限类型">
-      <el-option v-for="genre in filterItems.genre" :key="genre" :label="genre" :value="genre">
-      </el-option>
-    </el-select>
-  </el-form-item>
-  
-  <div class="flex-container">
-    <el-form-item label="是否限制级">
-      <el-checkbox v-model="isAdult">限制级</el-checkbox>
+    <!-- Other form items -->
+    <el-form-item label="电影类型">
+      <el-select v-model="selectedGenres" multiple placeholder="不限类型">
+        <el-option v-for="genre in filterItems.genre" :key="genre" :label="genre" :value="genre">
+        </el-option>
+      </el-select>
     </el-form-item>
-  </div>
-  <el-form-item>
-    <el-button type="primary" @click="searchWithFilters">搜索</el-button>
-  </el-form-item>
-</el-form>
+
+    <div class="flex-container">
+      <el-form-item label="是否限制级">
+        <el-checkbox v-model="isAdult">限制级</el-checkbox>
+      </el-form-item>
+    </div>
+    <el-form-item>
+      <el-button type="primary" @click="searchWithFilters">搜索</el-button>
+    </el-form-item>
+  </el-form>
 
 
   <!-- 电影列表 -->
@@ -60,6 +60,12 @@
       <div class="movie-card">
         <h1 class="movie-title">{{ movie.title }}</h1>
         <p class="movie-overview">{{ movie.overview }}</p>
+        <div class="star-rating">
+          <span class="rating-value">{{ movie.voteAverage }}</span>
+            <i v-for="(star, index) in 5" :key="index" class="star"
+              :class="{ 'filled-star': (index + 1) <= Math.round(movie.voteAverage / 2), 'empty-star': (index + 1) > Math.round(movie.voteAverage / 2) }">
+            </i>
+          </div>
         <div class="info-container">
           <div class="info-badge" :class="{ 'adult-badge': movie.adult, 'non-adult-badge': !movie.adult }">
             {{ movie.adult ? "成人分级" : "非成人分级" }}
@@ -67,9 +73,12 @@
           <div class="info-badge">{{ movie.popularity }} 流行度</div>
           <div class="info-badge" v-if="movie.budget !== 0">${{ movie.budget }} 预算</div>
           <div class="info-badge" v-if="movie.revenue !== 0">${{ movie.revenue }} 票房收入</div>
+
         </div>
-      </div>
-    </router-link>
+        
+      
+  </div>
+  </router-link>
   </div>
 
   <button class="pagination-btn" @click="loadMoreMovies" v-if="!noMoreMovies">加载更多电影</button>
@@ -82,7 +91,7 @@ import { ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import HeadComponent from '@/components/HeadComponent.vue';
 import { ElForm, ElFormItem, ElSlider, ElSelect, ElOption, ElCheckbox, ElButton } from 'element-plus';
-
+import authMixin from '../authMixin.js'
 
 
 
@@ -98,6 +107,7 @@ export default {
     ElCheckbox,
     ElButton
   },
+  mixins: [authMixin],
   setup() {
     const movies = ref([]);
     const isRatingUnlimited = ref(true);
@@ -140,8 +150,7 @@ export default {
       filterOptions.genreList = selectedGenres.value;
       filterOptions.movieInfoString = searchString.value;
       noMoreMovies.value = false;
-      if (isDateUnlimited.value)
-      {
+      if (isDateUnlimited.value) {
         filterOptions.releaseDate = null;
       }
       if (isRatingUnlimited.value) {
@@ -431,5 +440,33 @@ export default {
   align-items: center;
   gap: 10px;
 }
+.star-rating {
+  display: flex;
+  align-items: flex-start;
+  padding-bottom: 20px;
+}
+
+.rating-value {
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.star {
+  font-size: 1.2em;
+  font-style: normal;
+  position: relative;
+}
+
+.filled-star::before {
+  content: '\2605';
+  color: #ffac2c;
+}
+
+.empty-star::before {
+  content: '\2605';
+  color: #dadada;
+}
+
 
 </style>
