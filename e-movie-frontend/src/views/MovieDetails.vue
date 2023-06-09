@@ -1,75 +1,66 @@
 <template>
-    <div class="movie-details-container">
-      <div v-if="movieDetails">
-        <h1 style="font-size: 40px; font-weight: bold;">
-          {{ movieDetails.basic.title }}
-        </h1>
-        <p style="font-size: 20px;">
-          {{ movieDetails.basic.overview }}
-        </p>
-        <div class="info-tags">
-          <span :class="{'tag': true, 'adult-tag': movieDetails.basic.adult === 1}">
-            {{ movieDetails.basic.adult === 1 ? 'Adult' : '非成人分级' }}
-          </span>
-          <span v-if="movieDetails.basic.budget !== 0" class="tag">
-            预算: ${{ movieDetails.basic.budget }}
-          </span>
-          <span class="tag">流行度: {{ movieDetails.basic.popularity }}</span>
+  <div class="movie-details-container">
+    <div v-if="movieDetails">
+      <h1 style="font-size: 40px; font-weight: bold;">
+        {{ movieDetails.basic.title }}
+      </h1>
+      <p style="font-size: 20px;">
+        {{ movieDetails.basic.overview }}
+      </p>
+      <div class="info-tags">
+        <span :class="{ 'tag': true, 'adult-tag': movieDetails.basic.adult === 1 }">
+          {{ movieDetails.basic.adult === 1 ? 'Adult' : '非成人分级' }}
+        </span>
+        <span v-if="movieDetails.basic.budget !== 0" class="tag">
+          预算: ${{ movieDetails.basic.budget }}
+        </span>
+        <span class="tag">流行度: {{ movieDetails.basic.popularity }}</span>
 
-          
-          <span v-if="movieDetails.basic.revenue !== 0" class="tag">
-            票房: ${{ movieDetails.basic.revenue }}
-          </span>
-          <span class="tag">时长: {{ movieDetails.basic.runtime }} 分钟</span>
-          <span class="tag">当前状态: {{ movieDetails.basic.status === 0 ? '已完成' : '拍摄中'}}</span>
-        </div>
-        <div>
-          <h3>类型</h3>
-          <span
-            v-for="(genre, index) in movieDetails.genre"
-            :key="index"
-            class="tag"
-          >
-            {{ genre }}
-          </span>
-        </div>
-        <div>
-          <h3>国家</h3>
-          <span
-            v-for="(country, index) in movieDetails.country"
-            :key="index"
-            class="tag"
-          >
-            {{ country }}
-          </span>
-        </div>
-        <div>
-          <h3>标签</h3>
-          <span
-            v-for="(keyword, index) in movieDetails.keyword"
-            :key="index"
-            class="tag"
-          >
-            {{ keyword }}
-          </span>
-        </div>
+
+        <span v-if="movieDetails.basic.revenue !== 0" class="tag">
+          票房: ${{ movieDetails.basic.revenue }}
+        </span>
+        <span class="tag">时长: {{ movieDetails.basic.runtime }} 分钟</span>
+        <span class="tag">当前状态: {{ movieDetails.basic.status === 0 ? '已完成' : '拍摄中' }}</span>
       </div>
       <div>
+        <h3>类型</h3>
+        <span v-for="(genre, index) in movieDetails.genre" :key="index" class="tag">
+          {{ genre }}
+        </span>
+      </div>
+      <div>
+        <h3>国家</h3>
+        <span v-for="(country, index) in movieDetails.country" :key="index" class="tag">
+          {{ country }}
+        </span>
+      </div>
+      <div>
+        <h3>标签</h3>
+        <span v-for="(keyword, index) in movieDetails.keyword" :key="index" class="tag">
+          {{ keyword }}
+        </span>
+      </div>
+    </div>
+    <div>
 
-    <div v-if="movieDetails && movieDetails.similarMovies && movieDetails.similarMovies.length">
-      <h2 style="margin-top: 30px;">这部电影的观众也喜欢</h2>
-      <div class="movie-list">
-          <router-link
-            v-for="(similarMovie, index) in movieDetails.similarMovies"
-            :key="index"
-            :to="{ name: 'MovieDetails', params: { id: similarMovie.id } }"
-            class="movie-link"
-          >
+      <div v-if="movieDetails && movieDetails.similarMovies && movieDetails.similarMovies.length">
+        <h2 style="margin-top: 30px;">这部电影的观众也喜欢</h2>
+        <div class="movie-list">
+          <router-link v-for="(similarMovie, index) in movieDetails.similarMovies" :key="index"
+            :to="{ name: 'MovieDetails', params: { id: similarMovie.id } }" class="movie-link">
             <div class="movie-card">
               <h1 class="movie-title">{{ similarMovie.title }}</h1>
               <p class="movie-overview">{{ similarMovie.overview }}</p>
+              <div class="star-rating">
+                <span class="rating-value">{{ similarMovie.voteAverage }}</span>
+                <i v-for="(star, index) in 5" :key="index" class="star"
+                  :class="{ 'filled-star': (index + 1) <= Math.round(similarMovie.voteAverage / 2), 'empty-star': (index + 1) > Math.round(similarMovie.voteAverage / 2) }">
+                </i>
+              </div>
               <div class="info-container">
-                <div class="info-badge" :class="{ 'adult-badge': similarMovie.adult, 'non-adult-badge': !similarMovie.adult }">
+                <div class="info-badge"
+                  :class="{ 'adult-badge': similarMovie.adult, 'non-adult-badge': !similarMovie.adult }">
                   {{ similarMovie.adult ? "成人分级" : "非成人分级" }}
                 </div>
                 <div class="info-badge">{{ similarMovie.popularity }} 流行度</div>
@@ -79,10 +70,10 @@
             </div>
           </router-link>
         </div>
+      </div>
     </div>
   </div>
-    </div>
-  </template>
+</template>
   
   
 
@@ -112,21 +103,21 @@ export default {
         if (data.success) {
           this.movieDetails = data.data;
         }
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     },
-},
+  },
   mounted() {
-  this.fetchMovieDetails();
-}
+    this.fetchMovieDetails();
+  }
 };
 </script>
 <style scoped>
-
 .movie-details-container {
   text-align: left;
-  padding: 0 40px; /* 左右两侧留出40px的间隙 */
+  padding: 0 40px;
+  /* 左右两侧留出40px的间隙 */
 }
 
 
@@ -149,11 +140,11 @@ export default {
 }
 
 .similar-movies-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: space-between;
-    margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 .movie-card {
@@ -165,7 +156,7 @@ export default {
   width: 100%;
   transition: transform 0.3s ease-in-out;
   break-inside: avoid;
-/*  min-width: 200px;*/
+  /*  min-width: 200px;*/
 }
 
 .movie-link {
@@ -249,4 +240,31 @@ export default {
   margin: 0 auto;
 }
 
+.star-rating {
+  display: flex;
+  align-items: flex-start;
+  padding-bottom: 20px;
+}
+
+.rating-value {
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.star {
+  font-size: 1.2em;
+  font-style: normal;
+  position: relative;
+}
+
+.filled-star::before {
+  content: '\2605';
+  color: #ffac2c;
+}
+
+.empty-star::before {
+  content: '\2605';
+  color: #dadada;
+}
 </style>
