@@ -1,6 +1,7 @@
 package com.emovie.config;
 
 
+import com.emovie.config.interceptor.AdminInterceptors;
 import com.emovie.config.interceptor.JWTInterceptors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +20,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JWTInterceptors(redisTemplate))
                 .addPathPatterns("/**")  // 其他接口token验证
-                .excludePathPatterns("/user/**");  // 所有用户都放行
-//                .excludePathPatterns("/movie/**");// 所有电影都放行
+                .excludePathPatterns("/user/**")  // 所有用户都放行
+                .order(0);
 
+
+        registry.addInterceptor(new AdminInterceptors())
+                .addPathPatterns("/admin/**")
+                .order(1);
     }
 }
