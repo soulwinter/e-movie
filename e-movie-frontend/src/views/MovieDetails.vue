@@ -15,8 +15,9 @@
             预算: ${{ movieDetails.basic.budget }}
           </span>
           <span class="tag">流行度: {{ movieDetails.basic.popularity }}</span>
-          <span v-if="movieDetails.basic.revenue !== 0" class="tag">
-            票房: ${{ movieDetails.basic.revenue }}
+          票房:
+          <span v-if="movieDetails.basic.revenue !== 0">
+            ${{ movieDetails.basic.revenue }}
           </span>
           <span class="tag">时长: {{ movieDetails.basic.runtime }} 分钟</span>
           <span class="tag">当前状态: {{ movieDetails.basic.status === 0 ? '已完成' : '拍摄中'}}</span>
@@ -126,6 +127,8 @@ export default {
   text-align: left;
   padding: 0 40px; /* 左右两侧留出40px的间隙 */
 }
+
+
 
 .tag {
   display: inline-block;
