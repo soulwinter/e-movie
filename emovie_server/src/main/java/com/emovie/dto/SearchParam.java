@@ -1,5 +1,6 @@
 package com.emovie.dto;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,4 +22,14 @@ public class SearchParam {
     Integer voteAverageFrom;
     Integer voteAverageTo;
     List<String> genreList;
+
+    public boolean isNull() {
+        return movieInfoString==null
+                &&adult==null
+                &&originalLanguage==null
+                &&releaseDate==null
+                &&voteAverageFrom==null
+                &&voteAverageTo==null
+                &&genreList.isEmpty();
+    }
 }
