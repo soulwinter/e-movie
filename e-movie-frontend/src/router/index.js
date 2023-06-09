@@ -10,13 +10,13 @@ import AdminCreateNewMovieVue from '@/views/AdminCreateNewMovie.vue';
 const routes = [
   // Add your routes here
   {
-    path: '/',
+    path: '/login',
     name: 'Login',
     meta: {title: '登录 e-movie',},
     component: WelcomeLogin
   },
   {
-    path: '/home',
+    path: '/',
     name: 'MovieList',
     meta: {title: '电影列表 ｜ e-movie',},
     component: MovieList

@@ -83,6 +83,8 @@
 <script>
 import axios from 'axios';
 import authMixin from '../authMixin.js'
+import { getUserType } from '../user.js'
+import { useRouter } from 'vue-router';
 
 export default {
   name: "MovieDetails",
@@ -108,6 +110,7 @@ export default {
   },
   methods: {
     async fetchMovieDetails() {
+
       const id = this.$route.params.id;
       try {
         const response = await axios.get(`http://localhost:8081/movie/detailInfo/${id}`);
@@ -140,42 +143,42 @@ export default {
     },
     async updateMovieDetails() {
 
-        // 转换数据
-        this.movieDetails.basic.adult = this.editableAdult ? 1 : 0;
-        this.movieDetails.basic.status = this.editableStatus ? 0 : 1;
-        this.movieDetails.basic.title = this.editableTitle;
-        this.movieDetails.basic.overview = this.editableOverview;
-        this.movieDetails.basic.runtime = this.editableRuntime;
-        this.movieDetails.basic.revenue = this.editableRevenue;
-        this.movieDetails.basic.budget = this.editableBudget;
-        this.movieDetails.basic.popularity = this.editablePopularity;
+      // 转换数据
+      this.movieDetails.basic.adult = this.editableAdult ? 1 : 0;
+      this.movieDetails.basic.status = this.editableStatus ? 0 : 1;
+      this.movieDetails.basic.title = this.editableTitle;
+      this.movieDetails.basic.overview = this.editableOverview;
+      this.movieDetails.basic.runtime = this.editableRuntime;
+      this.movieDetails.basic.revenue = this.editableRevenue;
+      this.movieDetails.basic.budget = this.editableBudget;
+      this.movieDetails.basic.popularity = this.editablePopularity;
 
-        // 去除不符合条件的属性
-        if (this.movieDetails.basic.runtime <= 0) delete this.movieDetails.basic.runtime;
-        if (this.movieDetails.basic.revenue <= 0) delete this.movieDetails.basic.revenue;
-        if (this.movieDetails.basic.budget <= 0) delete this.movieDetails.basic.budget;
+      // 去除不符合条件的属性
+      if (this.movieDetails.basic.runtime <= 0) delete this.movieDetails.basic.runtime;
+      if (this.movieDetails.basic.revenue <= 0) delete this.movieDetails.basic.revenue;
+      if (this.movieDetails.basic.budget <= 0) delete this.movieDetails.basic.budget;
 
-        // 发送请求
-        try {
-          const response = await axios.post('http://localhost:8081/movie/updateInfo', this.movieDetails.basic);
+      // 发送请求
+      try {
+        const response = await axios.post('http://localhost:8081/admin/updateInfo', this.movieDetails.basic);
 
-          // 检查响应
-          if (response.data.success) {
-            alert('电影信息更新成功！');
-          } else {
-            alert('电影信息更新失败，请稍后再试！');
-          }
-        } catch (error) {
-          console.error('电影信息更新时发生错误:', error);
-          alert('电影信息更新失败，可能是网络问题或服务器错误。');
+        // 检查响应
+        if (response.data.success) {
+          alert('电影信息更新成功！');
+        } else {
+          alert('电影信息更新失败，请稍后再试！');
         }
-      
+      } catch (error) {
+        console.error('电影信息更新时发生错误:', error);
+        alert('电影信息更新失败，可能是网络问题或服务器错误。');
+      }
+
 
     },
 
     async deleteGenre(index) {
       try {
-        const response = await axios.get(`http://localhost:8081/movie/deleteGenre`, {
+        const response = await axios.get(`http://localhost:8081/admin/deleteGenre`, {
           params: {
             id: this.$route.params.id,
             Genre: this.movieDetails.genre[index]
@@ -192,7 +195,7 @@ export default {
       // 假设用户输入的值为 newValue
       const newValue = prompt('请输入新的类型');
       try {
-        const response = await axios.get(`http://localhost:8081/movie/addGenre`, {
+        const response = await axios.get(`http://localhost:8081/admin/addGenre`, {
           params: {
             id: this.$route.params.id,
             Genre: newValue
@@ -207,7 +210,7 @@ export default {
     },
     async deleteKeyword(index) {
       try {
-        const response = await axios.get(`http://localhost:8081/movie/deleteKeyWord`, {
+        const response = await axios.get(`http://localhost:8081/admin/deleteKeyWord`, {
           params: {
             id: this.$route.params.id,
             KeyWord: this.movieDetails.keyword[index]
@@ -224,7 +227,7 @@ export default {
       // 假设用户输入的值为 newValue
       const newValue = prompt('请输入新的关键词');
       try {
-        const response = await axios.get(`http://localhost:8081/movie/addKeyWord`, {
+        const response = await axios.get(`http://localhost:8081/admin/addKeyWord`, {
           params: {
             id: this.$route.params.id,
             KeyWord: newValue
@@ -239,6 +242,11 @@ export default {
     },
   },
   mounted() {
+    if (getUserType() != 1) {
+      alert("您不是管理员，无法进入该页面。请检查您的权限。");
+      const router = useRouter();
+      router.push('/');
+    }
     this.fetchMovieDetails();
   }
 };
