@@ -51,7 +51,9 @@ public class EsService {
 
         if(StrUtil.isNotBlank(movie.getReleaseDate()))releaseDate = movie.getReleaseDate().substring(0, 4);
         else releaseDate="unknown";
-//        System.out.println(genreList);
+
+        if(movie.getVoteAverage()==null)movie.setVoteAverage(0);
+
         MovieDocument movieDocument = new MovieDocument(
                 movie.getId(),
                 movie.getAdult() == 1,
