@@ -5,10 +5,11 @@ import MovieList from '@/views/MovieList.vue';
 import MovieDetails from "@/views/MovieDetails.vue";
 import AdminMovieList from "@/views/AdminMovieList.vue";
 import AdminMovieDetails from "@/views/AdminMovieDetails.vue";
+import AdminCreateNewMovieVue from '@/views/AdminCreateNewMovie.vue';
 
 const routes = [
   // Add your routes here
-    {
+  {
     path: '/',
     name: 'Login',
     component: WelcomeLogin
@@ -32,6 +33,11 @@ const routes = [
     path: "/admin/movie/:id",
     name: "AdminMovieDetails",
     component: AdminMovieDetails,
+  },
+  {
+    path: "/admin/create",
+    name: "AdminCreateNewMovie",
+    component: AdminCreateNewMovieVue,
   }
 ];
 
