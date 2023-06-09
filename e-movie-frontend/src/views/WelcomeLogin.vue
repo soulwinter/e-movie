@@ -1,7 +1,7 @@
 <template>
   <HeadComponent />
   <div class="container">
-    
+
     <div class="welcome-login">
       <h1>欢迎来到电影世界</h1>
       <!-- 切换登录和注册表单 -->
@@ -15,7 +15,8 @@
       <form v-if="showLogin === 1" @submit.prevent="login" class="form">
         <div class="input-group">
           <label style="text-align: left;" for="login-telephone">手机号码</label>
-          <input type="tel" id="login-telephone" v-model="loginData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  required />
+          <input type="tel" id="login-telephone" v-model="loginData.telephone" pattern="^1[3-9]\d{9}$"
+            title="请输入有效的中国大陆手机号码" required />
         </div>
         <div class="input-group">
           <label style="text-align: left;" for="login-password">密码</label>
@@ -29,8 +30,11 @@
         <div class="input-group">
           <label style="text-align: left;" for="loginWithCode-telephone">手机号码</label>
           <div style="display: flex; justify-content: space-between;">
-            <input type="tel" id="loginWithCode-telephone" v-model="loginWithCodeData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  style="width: 80%; margin-right: 5px;" required />
-            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('login_mode')" :disabled="countDown > 0">{{ countDown > 0 ? countDown + '秒后重新获取' : '获取验证码' }}</button>
+            <input type="tel" id="loginWithCode-telephone" v-model="loginWithCodeData.telephone" pattern="^1[3-9]\d{9}$"
+              title="请输入有效的中国大陆手机号码" style="width: 80%; margin-right: 5px;" required />
+            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;"
+              @click="getCode('login_mode')" :disabled="countDown > 0">{{ countDown > 0 ? countDown + '秒后重新获取' : '获取验证码'
+              }}</button>
           </div>
         </div>
         <div class="input-group">
@@ -42,7 +46,7 @@
 
 
       <!-- 注册表单 -->
-      <form  v-if="showLogin === 3" @submit.prevent="register" class="form">
+      <form v-if="showLogin === 3" @submit.prevent="register" class="form">
         <div class="input-group">
           <label style="text-align: left;" for="register-username">用户名</label>
           <input type="text" id="register-username" v-model="registerData.username" required />
@@ -54,8 +58,11 @@
         <div class="input-group">
           <label style="text-align: left;" for="register-telephone">手机号码</label>
           <div style="display: flex; justify-content: space-between;">
-            <input type="tel" id="register-telephone" v-model="registerData.telephone" pattern="^1[3-9]\d{9}$" title="请输入有效的中国大陆手机号码"  style="width: 80%; margin-right: 5px;" required />
-            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;" @click="getCode('register_mode')" :disabled="countDown > 0">{{ countDown > 0 ? countDown + '秒后重新获取' : '获取验证码' }}</button>
+            <input type="tel" id="register-telephone" v-model="registerData.telephone" pattern="^1[3-9]\d{9}$"
+              title="请输入有效的中国大陆手机号码" style="width: 80%; margin-right: 5px;" required />
+            <button type="button" class="btn btn-primary" style="width: 35%; margin-left: 10px;"
+              @click="getCode('register_mode')" :disabled="countDown > 0">{{ countDown > 0 ? countDown + '秒后重新获取' :
+                '获取验证码' }}</button>
           </div>
         </div>
         <div class="input-group">
@@ -104,7 +111,7 @@ export default {
     // 密码登录函数
     async login() {
       try {
-        let formData=new FormData();
+        let formData = new FormData();
         formData.append('telephone', this.loginData.telephone);
         formData.append('password', this.loginData.password);
         const response = await axios.post('http://localhost:8081/user/loginWithPassword', formData);
@@ -120,7 +127,12 @@ export default {
 
           // let token = this.$store.getters.getToken;
           // console.log("Authorization header with token: ", token); // 打印即将设置的 token
-          this.$router.push('/home');
+          if (response.data.data.type === 1) {
+            this.$router.push('/admin/home');
+          } else {
+            this.$router.push('/');
+          }
+
         } else {
           // 处理登录失败
           alert(response.data.errorMsg);
@@ -142,7 +154,7 @@ export default {
     // 验证码登录函数
     async loginWithCode() {
       try {
-        let formData=new FormData();
+        let formData = new FormData();
         formData.append('telephone', this.loginWithCodeData.telephone);
         formData.append('code', this.loginWithCodeData.code);
         const response = await axios.post('http://localhost:8081/user/loginWithCode', formData);
@@ -154,7 +166,11 @@ export default {
             .then(() => {
               axios.defaults.headers.common['Authorization'] = response.data.data.token;
             });
-          this.$router.push('/home');
+          if (response.data.data.type === 1) {
+            this.$router.push('/admin/home');
+          } else {
+            this.$router.push('/');
+          }
         } else {
           // 处理登录失败
           alert(response.data.errorMsg);
@@ -176,7 +192,7 @@ export default {
     // 注册函数
     async register() {
       try {
-        let formData=new FormData();
+        let formData = new FormData();
         formData.append('username', this.registerData.username);
         formData.append('password', this.registerData.password);
         formData.append('telephone', this.registerData.telephone);
@@ -206,7 +222,7 @@ export default {
     // 获取验证码函数
     async getCode(modeName) {
       try {
-        let formData=new FormData();
+        let formData = new FormData();
         formData.append('telephone', modeName === 'login_mode' ? this.loginWithCodeData.telephone : this.registerData.telephone);
         formData.append('mode', modeName);
         const response = await axios.post('http://localhost:8081/user/code', formData);

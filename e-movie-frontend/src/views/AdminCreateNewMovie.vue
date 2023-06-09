@@ -90,7 +90,7 @@
   
           // 发送请求
           try {
-            const response = await axios.post('http://localhost:8081/movie/newMovie', this.movieDetails.basic);
+            const response = await axios.post('http://localhost:8081/admin/newMovie', this.movieDetails.basic);
   
             // 检查响应
             if (response.data.success) {
@@ -109,6 +109,7 @@
       
     },
     mounted() {
+     
       this.initNewMovie();
     }
   };

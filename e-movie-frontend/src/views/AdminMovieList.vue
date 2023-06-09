@@ -127,8 +127,6 @@
   import authMixin from '../authMixin.js'
   
   
-  
-  
   export default {
     name: 'MovieList',
     mixins: [authMixin],
@@ -144,6 +142,7 @@
     },
     
     setup() {
+
       const movies = ref([]);
       const isRatingUnlimited = ref(true);
       const isDateUnlimited = ref(true);
@@ -195,6 +194,7 @@
         }
       };
   
+
       const fetchMovies = async (page = 1, perPage = 10) => {
         if (!noMoreMovies.value) {
           try {
@@ -290,6 +290,7 @@
       };
   
       onMounted(() => {
+      
         fetchMovies(currentPage, perPage);
         fetchFilterItems();
       });
@@ -324,6 +325,7 @@
         const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
         if (scrollTop + clientHeight >= scrollHeight - 300) {
           this.loadMoreMovies();
+          
         }
       },
   
