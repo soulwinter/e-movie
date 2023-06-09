@@ -38,7 +38,7 @@ public interface IMovieService {
 
     Result addGenre(String Genre,int movieId) throws IOException;
 
-    Result updateInfo(Movie info);
+    Result updateInfo(Movie info) throws IOException;
 
-    Result newMovie(Movie info);
+    Result newMovie(Movie info) throws IOException;
 }

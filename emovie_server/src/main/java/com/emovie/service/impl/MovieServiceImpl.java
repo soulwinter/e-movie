@@ -47,6 +47,9 @@ public class MovieServiceImpl implements IMovieService {
     @Autowired
     GenreDao genreDao;
 
+    @Autowired
+    EsService esService;
+
 
     @Override
     public Result detailInfo(int id) {
@@ -327,7 +330,7 @@ public class MovieServiceImpl implements IMovieService {
             }
             else{
                 //修改es中的数据
-                UpdateEsGenre(movieId);
+                esService.UpdateEsGenre(movieId);
                 return Result.ok();
             }
         }else{
@@ -366,7 +369,7 @@ public class MovieServiceImpl implements IMovieService {
             if(GenreList.size()==0){
                 movieDao.addGenre(movieId,Genre);
                 //修改es中的数据
-                UpdateEsGenre(movieId);
+                esService.UpdateEsGenre(movieId);
                 return Result.ok();
             }else{
                 return Result.fail("该种类已存在..");
@@ -375,37 +378,27 @@ public class MovieServiceImpl implements IMovieService {
             movieDao.addNewGenre(Genre);
             movieDao.addGenre(movieId,Genre);
             //修改es中的数据
-            UpdateEsGenre(movieId);
+            esService.UpdateEsGenre(movieId);
             return Result.ok();
         }
     }
 
     @Override
-    public Result updateInfo(Movie info) {
+    public Result updateInfo(Movie info) throws IOException {
         movieDao.updateInfo(info);
+        //同步到es
+        esService.InsertEsMovie(info);
         return Result.ok();
     }
 
     @Override
-    public Result newMovie(Movie info) {
+    public Result newMovie(Movie info) throws IOException {
         movieDao.newMovie(info);
         System.out.println("新增电影，返回主键:"+ info.getId());
+        //同步到es
+        esService.InsertEsMovie(info);
         return Result.ok(info.getId());
     }
 
-    /**
-     * 更新es中的Genre
-     * @param movieId
-     * @throws IOException
-     */
-    public void UpdateEsGenre(int movieId) throws IOException {
-        List<String> list = movieDao.getGenre(movieId);
-        System.out.println(list);
-        UpdateRequest request = new UpdateRequest("movie", String.valueOf((double)movieId));
-
-        request.doc("genreList",list);
-
-        restHighLevelClient.update(request,RequestOptions.DEFAULT);
-    }
 
 }

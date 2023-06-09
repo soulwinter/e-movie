@@ -70,13 +70,6 @@ public class MovieController {
     }
 
     /**
-     *
-     * @return
-     */
-    @PostMapping("/newMovie")
-    public Result newMovie(@RequestBody Movie basic){return movieService.newMovie(basic);}
-
-    /**
      * 点击搜索时推荐的电影返回电影简介
      * @param id
      * @return

@@ -31,7 +31,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/newMovie")
-    public Result newMovie(@RequestBody Movie basic){return movieService.newMovie(basic);}
+    public Result newMovie(@RequestBody Movie basic) throws IOException {return movieService.newMovie(basic);}
 
 
     /**
@@ -40,7 +40,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/updateInfo")
-    public Result updateInfo(@RequestBody Movie basic){
+    public Result updateInfo(@RequestBody Movie basic) throws IOException {
         return movieService.updateInfo(basic);
     }
 
