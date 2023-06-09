@@ -1,7 +1,7 @@
 <template>
     <div class="movie-details-container">
         <div v-if="movieDetails">
-            <div v-if="!isEditable">
+            <div>
                 <h1 style="font-size: 40px; font-weight: bold;">
                     {{ movieDetails.basic.title }}
                 </h1>
