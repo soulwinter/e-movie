@@ -82,7 +82,8 @@ public class MovieServiceImpl implements IMovieService {
         if(param.isNull()){
             System.out.println("TODO 如果参数里什么都没 就走数据库查询热门电影表");
             // TODO
-
+            Integer page = param.getRequestPage();//第几页
+            Integer number = param.getMovieNumberPerPage();//每页的条数
             return null;
         }
 
