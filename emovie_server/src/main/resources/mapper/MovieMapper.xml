@@ -82,6 +82,10 @@
     </update>
 
 
+    <insert id="newMovie" parameterType="com.emovie.entity.Movie" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO movie VALUES (null,#{adult},#{budget},#{homepage},#{imgbId},#{originalLanguage},#{originalTitle},#{overview},#{popularity},#{posterPath},#{releaseDate},#{revenue},#{runtime},#{status},#{tagline},#{title},#{voteAverage},#{voteCount},#{allCrew},#{deleted})
+    </insert>
+
 
     <select id="getMovieByIDList" resultType="com.emovie.entity.Movie">
         select *

@@ -126,12 +126,12 @@ public interface MovieDao {
     @Insert("insert into genre VALUES (null,#{Genre},null)")
     public int addNewGenre(@Param("Genre")String genre);
 
-    //以Basic为基础插入一个新的电影
-    @Insert("insert into movie VALUES (null,#{info.adult},#{info.budget},#{info.homepage},#{info.imgbId},#{info.originalLanguage},#{info.originalTitle},#{info.overview},#{info.popularity},#{info.posterPath},#{info.releaseDate},#{info.revenue},#{info.runtime},#{info.status},#{info.tagline},#{info.title},#{info.voteAverage},#{info.voteCount},#{info.allCrew},#{info.deleted})")
-    public int newMovie(@Param("info")Movie info);
+//    //以Basic为基础插入一个新的电影
+//    @Insert("insert into movie VALUES (null,#{info.adult},#{info.budget},#{info.homepage},#{info.imgbId},#{info.originalLanguage},#{info.originalTitle},#{info.overview},#{info.popularity},#{info.posterPath},#{info.releaseDate},#{info.revenue},#{info.runtime},#{info.status},#{info.tagline},#{info.title},#{info.voteAverage},#{info.voteCount},#{info.allCrew},#{info.deleted})")
+//    public int newMovie(@Param("info")Movie info);
 
     //更新电影的Basic信息
     int updateInfo(Movie movie);
     //以电影的Basic信息为基本内容新建一个
-//    int newMovie(Movie info);
+    int newMovie(Movie info);
 }
