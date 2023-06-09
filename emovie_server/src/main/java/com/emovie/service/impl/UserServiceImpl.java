@@ -53,25 +53,19 @@ public class UserServiceImpl implements IUserService {
             //若没有用户，直接返回
             Assert.notNull(userEntity, "该手机号还未注册或密码有误");
 
-            //如果找到啦 判断有没有token
-//            if(userEntity.getToken() == null || userEntity.getToken().trim().equals("")){
-//                //没有token 造一个给他 并更新到数据库中
-//                String token = MD5.GetMD5Code(telephone + password + Calendar.getInstance().getTimeInMillis());
-//                userEntity.setToken(token);
-//                userDao.updateUser(userEntity);
-//            }
-
             //给他一个token
             Map<String,String> payload=new HashMap<>();
             payload.put("id",String.valueOf(userEntity.getId()));
             payload.put("telephone",userEntity.getTelephone());
             payload.put("username",userEntity.getUsername());
+            payload.put("type", String.valueOf(userEntity.getType()));
             String token = JWTUtils.getToken(payload);
 
 
-            HashMap<String, String> map = new HashMap<>();
+            HashMap<String, Object> map = new HashMap<>();
             map.put("token",token);
             map.put("username",userEntity.getUsername());
+            map.put("type",userEntity.getType());
             result = Result.ok(map);
         } catch (Exception e) {
             result = Result.fail(e.getMessage());
@@ -150,6 +144,7 @@ public class UserServiceImpl implements IUserService {
         payload.put("id",String.valueOf(userEntity.getId()));
         payload.put("telephone",userEntity.getTelephone());
         payload.put("username",userEntity.getUsername());
+        payload.put("type", String.valueOf(userEntity.getType()));
         String token = JWTUtils.getToken(payload);
 
 //        //7.2 将User对象转为String存储
@@ -164,10 +159,10 @@ public class UserServiceImpl implements IUserService {
 //        stringRedisTemplate.expire(LOGIN_USER_KEY+token,LOGIN_USER_TTL,TimeUnit.MINUTES);
 
         //8.返回User信息
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
         map.put("token",token);
         map.put("username",userEntity.getUsername());
-
+        map.put("type",userEntity.getType());
         return Result.ok(map);
     }
 
