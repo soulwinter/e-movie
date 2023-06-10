@@ -39,8 +39,10 @@ public class UserController {
     //说明是什么方法(可以理解为方法注释)
     @ApiOperation("使用密码登录")
     //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
-    @ApiImplicitParams({@ApiImplicitParam(name = "telephone", value = "手机号",required=false),
-                        @ApiImplicitParam(name = "password", value = "密码",required=false)})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "telephone", value = "手机号",required=false),
+            @ApiImplicitParam(name = "password", value = "密码",required=false)
+    })
     @PostMapping("/loginWithPassword")
     public Result loginWithPassword(@RequestParam(value = "telephone",required = false) String telephone,
                         @RequestParam(value = "password",required = false) String password){

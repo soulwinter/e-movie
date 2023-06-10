@@ -137,7 +137,7 @@ export default {
       voteAverageFrom: null,
       voteAverageTo: null,
       releaseDate: null,
-      adult: null,
+      isAdult: null,
       genreList: [],
       movieInfoString: null,
     });
@@ -146,7 +146,7 @@ export default {
       filterOptions.voteAverageFrom = voteRange.value[0];
       filterOptions.voteAverageTo = voteRange.value[1];
       filterOptions.releaseDate = releaseRange.value;
-      filterOptions.adult = isAdult.value;
+      filterOptions.isAdult = isAdult.value;
       filterOptions.genreList = selectedGenres.value;
       filterOptions.movieInfoString = searchString.value;
       noMoreMovies.value = false;
