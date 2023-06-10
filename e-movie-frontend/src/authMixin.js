@@ -8,7 +8,7 @@ export default {
       axios.defaults.headers.common['Authorization'] = token; // 设置默认头部
     } else {
       // 处理没有 token 的情况，比如重定向到登录页面
-      this.$router.push('/')
+      this.$router.push('/login')
     }
   }
 }

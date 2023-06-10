@@ -23,6 +23,12 @@
         <span class="tag">时长: {{ movieDetails.basic.runtime }} 分钟</span>
         <span class="tag">当前状态: {{ movieDetails.basic.status === 0 ? '已完成' : '拍摄中' }}</span>
       </div>
+      <div class="star-rating">
+        <span class="rating-value">{{ movieDetails.basic.voteAverage }}</span>
+        <i v-for="(star, index) in 5" :key="index" class="star"
+          :class="{ 'filled-star': (index + 1) <= Math.round(movieDetails.basic.voteAverage / 2), 'empty-star': (index + 1) > Math.round(movieDetails.basic.voteAverage / 2) }">
+        </i>
+      </div>
       <div>
         <h3>类型</h3>
         <span v-for="(genre, index) in movieDetails.genre" :key="index" class="tag">
@@ -102,6 +108,8 @@ export default {
         const data = response.data;
         if (data.success) {
           this.movieDetails = data.data;
+          // 屏蔽相同项
+          this.movieDetails.similarMovies = this.movieDetails.similarMovies.filter(movie => movie.id !== this.movieDetails.id);
         }
       } catch (error) {
         console.error(error);

@@ -89,7 +89,8 @@ export default {
       if (this.movieDetails.basic.runtime <= 0) delete this.movieDetails.basic.runtime;
       if (this.movieDetails.basic.revenue <= 0) delete this.movieDetails.basic.revenue;
       if (this.movieDetails.basic.budget <= 0) delete this.movieDetails.basic.budget;
-
+      // const router = useRouter();
+      const self = this;
       // 发送请求
       try {
         const response = await axios.post('http://localhost:8081/admin/newMovie', this.movieDetails.basic);
@@ -97,6 +98,8 @@ export default {
         // 检查响应
         if (response.data.success) {
           alert('电影信息更新成功！');
+          // console.log('/admin/movie/' + parseInt(response.data.data))
+          self.$router.push('/admin/movie/' + parseInt(response.data.data));
         } else {
           alert('电影信息更新失败，请稍后再试！');
         }
@@ -111,6 +114,7 @@ export default {
 
   },
   mounted() {
+    
     if (getUserType() != 1) {
       alert("您不是管理员，无法进入该页面。请检查您的权限。");
       const router = useRouter();

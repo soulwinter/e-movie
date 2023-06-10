@@ -49,6 +49,7 @@
     </div>
     <el-form-item>
       <el-button type="primary" @click="searchWithFilters">搜索</el-button>
+      <el-button type="primary" @click="navigateToCreate()">创建新电影</el-button>
     </el-form-item>
   </el-form>
 
@@ -110,7 +111,9 @@
         <td>{{ item.voteCount || '-' }}</td>
         <td>
           <button class="start-transport" @click="navigateToMovie(item.id)">查看</button>
+         
         </td>
+        
       </tr>
     </tbody>
   </table>
@@ -174,7 +177,7 @@ export default {
       voteAverageFrom: null,
       voteAverageTo: null,
       releaseDate: null,
-      adult: null,
+      isAdult: null,
       genreList: [],
       movieInfoString: null,
     });
@@ -183,7 +186,7 @@ export default {
       filterOptions.voteAverageFrom = voteRange.value[0];
       filterOptions.voteAverageTo = voteRange.value[1];
       filterOptions.releaseDate = releaseRange.value;
-      filterOptions.adult = isAdult.value;
+      filterOptions.isAdult = isAdult.value;
       filterOptions.genreList = selectedGenres.value;
       filterOptions.movieInfoString = searchString.value;
       noMoreMovies.value = false;
@@ -290,6 +293,10 @@ export default {
     const navigateToMovie = (id) => {
       router.push({ name: 'AdminMovieDetails', params: { id: id } });
     };
+    
+    const navigateToCreate = () => {
+      router.push("/admin/create");
+    }
 
     onMounted(() => {
 
@@ -313,7 +320,8 @@ export default {
       applyFilter,
       noMoreMovies,
       isDateUnlimited,
-      isRatingUnlimited
+      isRatingUnlimited,
+      navigateToCreate
     };
   },
   mounted() {
