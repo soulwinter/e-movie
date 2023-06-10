@@ -54,6 +54,12 @@ public class MovieController {
      * @param movieInfoString
      * @return
      */
+
+
+    @ApiOperation(value = "搜索时推荐电影", notes = "根据搜索框中内容进行推荐搜索")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "movieInfoString", value = "搜索框中的字符串", required = true)
+    })
     @PostMapping("/searchRecommendation")
     public Result searchRecommendation(@RequestBody String movieInfoString){
         System.out.println(movieInfoString);
@@ -64,6 +70,9 @@ public class MovieController {
      * 筛选的所有选项
      * @return
      */
+
+
+    @ApiOperation(value = "获取筛选类型列表", notes = "获取电影推荐系统的筛选类型列表")
     @GetMapping("/filterItem")
     public Result getFilterItem(){
         return movieService.getFilterItem();
@@ -74,6 +83,11 @@ public class MovieController {
      * @param id
      * @return
      */
+
+    @ApiOperation(value = "根据 ID 获取电影信息", notes = "根据电影的 ID 获取电影的详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "电影id", required = true)
+    })
     @GetMapping("/{id}")
     public Result getMovieById(@PathVariable double id){
         return movieService.getMovieById((int)id);
