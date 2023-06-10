@@ -57,6 +57,13 @@ public class UserController {
      * @param mode
      * @return
      */
+
+
+    @ApiOperation(value = "发送验证码", notes = "根据传入的手机号和发送类型发送验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "telephone", value = "手机号码", required = true),
+            @ApiImplicitParam(name = "mode", value = "是登录模式还是注册模式", required = true)
+    })
     @PostMapping("code")
     public Result sendCode(@RequestParam("telephone") String telephone,
                            @RequestParam("mode") String mode) {
@@ -70,6 +77,13 @@ public class UserController {
      * @param session
      * @return
      */
+
+
+    @ApiOperation(value = "验证码登录", notes = "通过手机号和验证码进行登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "telephone", value = "手机号码", required = false),
+            @ApiImplicitParam(name = "code", value = "验证码", required = false)
+    })
     @PostMapping("/loginWithCode")
     public Result loginWithCode(@RequestParam(value = "telephone") String telephone,
                                 @RequestParam(value = "code") String code,
@@ -86,6 +100,15 @@ public class UserController {
      * @param code
      * @return
      */
+
+
+    @ApiOperation(value = "用户注册", notes = "通过手机号、密码、用户名和验证码进行注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "telephone", value = "手机号码", required = true),
+            @ApiImplicitParam(name = "password", value = "密码", required = true),
+            @ApiImplicitParam(name = "username", value = "用户名", required = true),
+            @ApiImplicitParam(name = "code", value = "验证码", required = true)
+    })
     @PostMapping("/register")
     public Result register(@RequestParam(value = "telephone") String telephone,
                            @RequestParam(value = "password") String password,
