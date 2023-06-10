@@ -29,10 +29,18 @@ public class MovieController {
     IMovieService movieService;
 
 
-    @ApiOperation("获得分页电影信息")
+    @ApiOperation(value = "搜索电影", notes = "根据条件搜索电影信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "requestPage", value = "页号",required = true,defaultValue = "1"),
-            @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数",required = true)})
+            @ApiImplicitParam(name = "movieInfoString", value = "搜索框中的字符串", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "requestPage", value = "请求的页码，要求返回该页码的全部电影信息", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "movieNumberPerPage", value = "每页电影数", required = true, dataType = "Int"),
+            @ApiImplicitParam(name = "adult", value = "是否是成人级别", required = false, dataType = "int"),
+            @ApiImplicitParam(name = "originalLangage", value = "官方语言", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "releaseDate", value = "发布年份", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "voteAverageFrom", value = "评分起始", required = false, dataType = "int"),
+            @ApiImplicitParam(name = "voteAverageTo", value = "评分结束", required = false, dataType = "int"),
+            @ApiImplicitParam(name = "genre", value = "电影类型", required = false, dataType = "object")
+    })
     @PostMapping("/listInfo")
     public Result listInfo(@RequestBody SearchParam param){
         System.out.println(param);
